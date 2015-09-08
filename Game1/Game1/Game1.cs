@@ -14,6 +14,8 @@ namespace Game1
         Texture2D boris;
         Vector2 boss;
         int boss_speed;
+        float ypos;
+        float xpos;
 
         public Game1()
         {
@@ -32,6 +34,7 @@ namespace Game1
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+
             boris = Content.Load<Texture2D>("Boris_Hoofd.jpg");
             // TODO: use this.Content to load your game content here
         }
@@ -41,16 +44,16 @@ namespace Game1
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             if (Keyboard.GetState().IsKeyDown(Keys.Up))
-                boss += new Vector2(0.0f, 1.0f);
+                ypos += -1;
             if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                boss += new Vector2(1.0f, 0.0f);
+                xpos += -1;
             if (Keyboard.GetState().IsKeyDown(Keys.Down))
-                boss += new Vector2(-1.0f, 0.0f);
+                ypos += 1;
             if (Keyboard.GetState().IsKeyDown(Keys.Right))
-                boss += new Vector2(0.0f, -1.0f);
+                xpos += 1;
             // TODO: Add your update logic here
 
-
+            boss = new Vector2(xpos * boss_speed, ypos * boss_speed);
             base.Update(gameTime);
         }
 
