@@ -11,6 +11,9 @@ namespace Game1
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Texture2D boris;
+        Vector2 boss;
+        int boss_speed;
 
         public Game1()
         {
@@ -21,54 +24,42 @@ namespace Game1
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
             base.Initialize();
+            boss_speed = 10;
         }
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
+            boris = Content.Load<Texture2D>("Boris_Hoofd.jpg");
             // TODO: use this.Content to load your game content here
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// game-specific content.
-        /// </summary>
-        protected override void UnloadContent()
-        {
-            // TODO: Unload any non ContentManager content here
-        }
-
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                boss += new Vector2(0.0f, 1.0f);
+            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+                boss += new Vector2(1.0f, 0.0f);
+            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                boss += new Vector2(-1.0f, 0.0f);
+            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                boss += new Vector2(0.0f, -1.0f);
             // TODO: Add your update logic here
+
 
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
+            spriteBatch.Begin();
+            spriteBatch.Draw(boris, boss, Color.White);
+            spriteBatch.End();
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
