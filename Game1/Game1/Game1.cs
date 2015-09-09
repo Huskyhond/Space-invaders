@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace Game1
 {
@@ -15,10 +16,8 @@ namespace Game1
         Texture2D background_stars;
         Texture2D player_bullet_texture;
         Vector2 player_vector;
-        Vector2 bullet_vector;
-        /*int boss_speed;
-        float ypos;
-        float xpos;*/
+
+        List<Bullet> bullets = new List<Bullet>();
 
         public Game1()
         {
@@ -30,7 +29,6 @@ namespace Game1
         {
             // TODO: Add your initialization logic here
             base.Initialize();
-            bullet_vector = new Vector2(0.0f, -100.0f);
             //boss_speed = 10;
         }
 
@@ -46,20 +44,9 @@ namespace Game1
 
         protected override void Update(GameTime gameTime)
         {
-            /* if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-                 Exit();
-             if (Keyboard.GetState().IsKeyDown(Keys.Up))
-                 ypos += -1;
-             if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                 xpos += -1;
-             if (Keyboard.GetState().IsKeyDown(Keys.Down))
-                 ypos += 1;
-             if (Keyboard.GetState().IsKeyDown(Keys.Right))
-                 xpos += 1;
-             // TODO: Add your update logic here
-
-             player_vector = new Vector2(xpos * boss_speed, ypos * boss_speed);*/
             player_vector = new Vector2(Mouse.GetState().X,Mouse.GetState().Y);
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+                Exit();
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
                 
             base.Update(gameTime);
