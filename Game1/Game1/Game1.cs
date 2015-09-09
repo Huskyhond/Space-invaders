@@ -13,7 +13,7 @@ namespace Game1
         SpriteBatch spriteBatch;
         Texture2D player_texture;
         Vector2 player_vector;
-        Texture2D kappa_texture;
+        Texture2D background_stars;
         int boss_speed;
         float ypos;
         float xpos;
@@ -35,26 +35,27 @@ namespace Game1
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            player_texture = Content.Load<Texture2D>("Boris_Hoofd.jpg");
-            kappa_texture = Content.Load<Texture2D>("Kappa.png");
+            player_texture = Content.Load<Texture2D>("Fighter_small.png");
+            background_stars = Content.Load<Texture2D>("background_stars.png");
             // TODO: use this.Content to load your game content here
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
-                ypos += -1;
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                xpos += -1;
-            if (Keyboard.GetState().IsKeyDown(Keys.Down))
-                ypos += 1;
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
-                xpos += 1;
-            // TODO: Add your update logic here
+            /* if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+                 Exit();
+             if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                 ypos += -1;
+             if (Keyboard.GetState().IsKeyDown(Keys.Left))
+                 xpos += -1;
+             if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                 ypos += 1;
+             if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                 xpos += 1;
+             // TODO: Add your update logic here
 
-            player_vector = new Vector2(xpos * boss_speed, ypos * boss_speed);
+             player_vector = new Vector2(xpos * boss_speed, ypos * boss_speed);*/
+            player_vector = new Vector2(Mouse.GetState().X,Mouse.GetState().Y);
             base.Update(gameTime);
         }
 
@@ -62,8 +63,9 @@ namespace Game1
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
-            spriteBatch.Draw(player_texture, player_vector, new Rectangle(0,0, 100, 100) , Color.White);
-
+            spriteBatch.Draw(background_stars, new Rectangle(0, 0, 800, 600), Color.White);
+            spriteBatch.Draw(player_texture, player_vector , Color.White);
+            
             spriteBatch.End();
             // TODO: Add your drawing code here
 
