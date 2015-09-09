@@ -12,11 +12,13 @@ namespace Game1
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Texture2D player_texture;
-        Vector2 player_vector;
         Texture2D background_stars;
-        int boss_speed;
+        Texture2D player_bullet_texture;
+        Vector2 player_vector;
+        Vector2 bullet_vector;
+        /*int boss_speed;
         float ypos;
-        float xpos;
+        float xpos;*/
 
         public Game1()
         {
@@ -28,7 +30,8 @@ namespace Game1
         {
             // TODO: Add your initialization logic here
             base.Initialize();
-            boss_speed = 10;
+            bullet_vector = new Vector2(0.0f, -100.0f);
+            //boss_speed = 10;
         }
 
         protected override void LoadContent()
@@ -37,6 +40,7 @@ namespace Game1
             spriteBatch = new SpriteBatch(GraphicsDevice);
             player_texture = Content.Load<Texture2D>("Fighter_small.png");
             background_stars = Content.Load<Texture2D>("background_stars.png");
+            player_bullet_texture = Content.Load<Texture2D>("player_bullet.png");
             // TODO: use this.Content to load your game content here
         }
 
@@ -56,6 +60,8 @@ namespace Game1
 
              player_vector = new Vector2(xpos * boss_speed, ypos * boss_speed);*/
             player_vector = new Vector2(Mouse.GetState().X,Mouse.GetState().Y);
+            if (Keyboard.GetState().IsKeyDown(Keys.Space))
+                
             base.Update(gameTime);
         }
 
