@@ -8,7 +8,7 @@ namespace Game1
 {
     class Health
     {
-        int health = 3;
+        int health = 3; // begin health
 
         public int getHealth()
         {
