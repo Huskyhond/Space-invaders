@@ -38,6 +38,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Astroid.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="Health.cs" />
     <Compile Include="Game1.cs" />
