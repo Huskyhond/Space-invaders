@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Game1
 {
-    class Bullet
+    public class Bullet
     {
         private Texture2D texture;
 

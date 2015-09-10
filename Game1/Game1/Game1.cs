@@ -23,7 +23,9 @@ namespace Game1
         Texture2D background_stars;
         Texture2D player_bullet_texture;
         Texture2D enemy_astroid;
+        Texture2D healthbar;
         Player player;
+        Health health;
 
         //settings
         const int minShotDelay = 5; // frames
@@ -47,7 +49,8 @@ namespace Game1
             Rectangle b = GraphicsDevice.Viewport.Bounds;
             windowWidth = b.Width;
             windowHeight = b.Height;
-            player = new Player(player_texture);
+            health = new Health(healthbar);
+            player = new Player(player_texture, health);
         }
 
         protected override void LoadContent()
@@ -58,6 +61,7 @@ namespace Game1
             background_stars = Content.Load<Texture2D>("background_stars.png");
             player_bullet_texture = Content.Load<Texture2D>("player_bullet.png");
             enemy_astroid = Content.Load<Texture2D>("astroid.png");
+            healthbar = Content.Load<Texture2D>("healthBar.png");
             // TODO: use this.Content to load your game content here
         }
 
@@ -111,7 +115,7 @@ namespace Game1
                     }
                     else if(CollisionDetection(astroid))
                     {
-                        player.health += -1;
+                        player.health.amount += -1;
                         toBeRemoved.Add(astroid);
                     }
                 }
@@ -149,9 +153,9 @@ namespace Game1
             UpdateBullets();
             GenerateRain();
 
-            if (player.health < 1)
+            if (player.health.amount < 1)
             {
-                throw new Exception();
+                Exit();
             }
 
             base.Update(gameTime);
@@ -191,6 +195,7 @@ namespace Game1
             spriteBatch.Begin();
             spriteBatch.Draw(background_stars, new Rectangle(0, 0, windowWidth, windowHeight), Color.White);
             spriteBatch.Draw(player_texture, player.position, Color.White);
+            player.health.Draw(spriteBatch);
             foreach (Bullet bullet in bullets)
                 bullet.Draw(spriteBatch);
             foreach (Astroid astroid in astroids)

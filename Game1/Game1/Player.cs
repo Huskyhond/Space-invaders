@@ -13,13 +13,15 @@ namespace Game1
         public Vector2 origin { get; set; }
         public Vector2 velocity { get; set; }
 
-        public int health { get; set; }
+        public Health health { get; set; }
         public Texture2D texture { get; set; }
-        public Player(Texture2D texture, int health = 3)
+
+        public Player(Texture2D texture, Health health)
         {
             this.health = health;
             this.texture = texture;
         }
+
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(texture, position, null, Color.White, 0f, origin, 1f, SpriteEffects.None, 0);
