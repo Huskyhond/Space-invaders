@@ -68,7 +68,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Kappa2.png" />
-    <Content Include="Content\pixel_heart.PNG" />
     <Content Include="Content\player_bullet.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

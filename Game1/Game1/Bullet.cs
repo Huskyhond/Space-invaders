@@ -10,13 +10,17 @@ namespace Game1
     class Bullet
     {
         private Texture2D texture;
-        private Vector2 position;
-        private Vector2 origin;
-        private Vector2 velocity;
 
-        public Vector2 getPosition { get; set; }
-        public Vector2 getOrigin { get; set; }
-        public Vector2 getVelocity { get; set; }
+        public Vector2 position { get ; set; }
+        public Vector2 origin { get; set; }
+        public Vector2 velocity { get; set; }
+        public Boolean visible { get; set;}
+
+        public Bullet(Texture2D texture)
+        {
+            this.texture = texture;
+            visible = false;
+        }
 
         public void Draw(SpriteBatch spriteBatch)
         {
