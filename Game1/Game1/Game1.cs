@@ -27,6 +27,7 @@ namespace Game1
         Player player;
         Health health;
 
+
         //settings
         const int minShotDelay = 5; // frames
 
@@ -51,6 +52,7 @@ namespace Game1
             windowHeight = b.Height;
             health = new Health(healthbar);
             player = new Player(player_texture, health);
+            player.health.position = new Vector2(600, 450);
         }
 
         protected override void LoadContent()
@@ -71,7 +73,7 @@ namespace Game1
             {
                 float rdm = random.Next(0, (windowWidth-30));
                 Astroid astroid = new Astroid(enemy_astroid);
-                astroid.velocity = new Vector2(0.0f, 1.0f);
+                astroid.velocity = new Vector2((float)random.NextDouble(), 1.0f);
                 astroid.position = new Vector2(rdm, -30.0f);
 
                 astroids.Add(astroid);
@@ -94,7 +96,6 @@ namespace Game1
                 newBullet.position = player.position;
                 newBullet.visible = true;
 
-                //if (bullets.Count < 100)
                 bullets.Add(newBullet);
                 shotDelay = minShotDelay;
             }
@@ -102,9 +103,9 @@ namespace Game1
 
         public void UpdateRain()
         {
+            List<Astroid> toBeRemoved = new List<Astroid>();
             if (astroids.Count > 0)
             {
-                List<Astroid> toBeRemoved = new List<Astroid>();
                 foreach (Astroid astroid in astroids)
                 {
                     astroid.position += astroid.velocity;
@@ -113,32 +114,42 @@ namespace Game1
                     {
                         toBeRemoved.Add(astroid);
                     }
-                    else if(CollisionDetection(astroid))
+                    else if(AstroidPlayerCollisionDetection(astroid))
                     {
                         player.health.amount += -1;
                         toBeRemoved.Add(astroid);
                     }
                 }
                 foreach (Astroid remAstroid in toBeRemoved)
-                {
                     astroids.Remove(remAstroid);
-                }
+            }
+            for (int i = 0; i < astroids.Count; i++)
+            {
+                if (astroids[i].health < 1)
+                    toBeRemoved.Add(astroids[i]);
+                foreach (Astroid remAstroid in toBeRemoved)
+                    astroids.Remove(remAstroid);
             }
         }
 
         public void UpdateBullets()
         {
-            foreach (Bullet bullet in bullets)
+            if (bullets.Count > 0)
             {
-                bullet.position += bullet.velocity;
-            }
-            for (int i = 0; i < bullets.Count; i++)
-            {
-                if (!bullets[i].visible)
+                List<Bullet> toBeRemoved = new List<Bullet>();
+                foreach (Bullet bullet in bullets)
                 {
-                    bullets.RemoveAt(i);
-                    i--;
+                    bullet.position += bullet.velocity;
+                    Vector2 pos = bullet.position;
+                    if (pos.Y > windowHeight)
+                        toBeRemoved.Add(bullet);
+                    if (AstroidBulletCollisionDetection(bullet))
+                    {
+                        toBeRemoved.Add(bullet);
+                    }
                 }
+                foreach (Bullet remBullet in toBeRemoved)
+                    bullets.Remove(remBullet);
             }
         }
 
@@ -161,7 +172,37 @@ namespace Game1
             base.Update(gameTime);
         }
 
-        public bool CollisionDetection(Astroid astroid)
+        public bool AstroidBulletCollisionDetection(Bullet bullet)
+        {
+            float bulletMinY = bullet.position.Y;
+            float bulletMaxY = (bullet.position.Y + bullet.texture.Bounds.Height);
+
+            float bulletMinX = bullet.position.X;
+            float bulletMaxX = (bullet.position.X + bullet.texture.Bounds.Width);
+            for (int i = 0; i < astroids.Count; i++)
+            {
+                float astroidMinX = astroids[i].position.X;
+                float astroidMaxX = (astroids[i].position.X + astroids[i].texture.Bounds.Width);
+
+                float astroidMinY = astroids[i].position.Y;
+                float astroidMaxY = (astroids[i].position.Y + astroids[i].texture.Bounds.Height);
+
+                float middroidX = (astroidMinX + ((astroidMaxX - astroidMinX) / 2));
+                float middroidY = (astroidMinY + ((astroidMaxY - astroidMinY) / 2));
+
+                if (middroidX > bulletMinX && middroidX < bulletMaxX)
+                {
+                    if (middroidY > bulletMinY && middroidY < bulletMaxY)
+                    {
+                        astroids[i].health--;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool AstroidPlayerCollisionDetection(Astroid astroid)
         {
             float playerMinX = player.position.X;
             float playerMaxX = (player.position.X + player_texture.Bounds.Width);
@@ -184,7 +225,6 @@ namespace Game1
                 {
                     return true;
                 }
-
             }
             return false;
         }

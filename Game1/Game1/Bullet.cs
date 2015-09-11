@@ -9,8 +9,7 @@ namespace Game1
 {
     public class Bullet
     {
-        private Texture2D texture;
-
+        public Texture2D texture { get; set; }
         public Vector2 position { get ; set; }
         public Vector2 origin { get; set; }
         public Vector2 velocity { get; set; }
