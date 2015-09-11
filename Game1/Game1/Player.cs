@@ -12,14 +12,15 @@ namespace Game1
         public Vector2 position { get; set; }
         public Vector2 origin { get; set; }
         public Vector2 velocity { get; set; }
-
         public Health health { get; set; }
         public Texture2D texture { get; set; }
+        public List<Bullet_Path> bullet_path { get; set; }
 
-        public Player(Texture2D texture, Health health)
+        public Player(Texture2D texture, Health health, List<Bullet_Path> bullet_path)
         {
             this.health = health;
             this.texture = texture;
+            this.bullet_path = bullet_path;
         }
 
         public void Draw(SpriteBatch spriteBatch)

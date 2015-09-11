@@ -25,8 +25,9 @@ namespace Game1
         Health health;
         int windowHeight;
         int windowWidth;
-        List<Bullet> bullets = new List<Bullet>();
+        //List<Bullet> bullets = new List<Bullet>();
         List<Astroid> astroids = new List<Astroid>();
+        List<Bullet_Path> bullet_paths = new List<Bullet_Path>();
 
 
         //settings
@@ -49,8 +50,10 @@ namespace Game1
             windowWidth = b.Width;
             windowHeight = b.Height;
             health = new Health(healthbar);
-            player = new Player(player_texture, health);
+            player = new Player(player_texture, health, bullet_paths);
             player.health.position = new Vector2(600, 450);
+            bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -10.0f), new List<Bullet>(), new Vector2(0,0)));
+            bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -10.0f), new List<Bullet>(), new Vector2(25,0)));
         }
 
         protected override void LoadContent()
@@ -89,12 +92,16 @@ namespace Game1
         {
             if (shotDelay == 0)
             {
-                Bullet newBullet = new Bullet(player_bullet_texture);
+               /* Bullet newBullet = new Bullet(player_bullet_texture);
                 newBullet.velocity = new Vector2(0.0f, -15.0f);
                 newBullet.position = player.position;
                 newBullet.visible = true;
 
-                bullets.Add(newBullet);
+                bullets.Add(newBullet);*/
+                for(int i = 0; i < bullet_paths.Count; i++)
+                {
+                    bullet_paths[i].Shoot(player_bullet_texture);
+                }
                 shotDelay = minShotDelay;
             }
         }
@@ -132,22 +139,33 @@ namespace Game1
 
         public void UpdateBullets()
         {
-            if (bullets.Count > 0)
+            for (int i = 0; i < bullet_paths.Count; i++)
             {
-                List<Bullet> toBeRemoved = new List<Bullet>();
-                foreach (Bullet bullet in bullets)
+                if (bullet_paths[i].bullets.Count > 0)
                 {
-                    bullet.position += bullet.velocity;
-                    Vector2 pos = bullet.position;
-                    if (pos.Y > windowHeight)
-                        toBeRemoved.Add(bullet);
-                    if (AstroidBulletCollisionDetection(bullet))
+                    List<Bullet> toBeRemoved = new List<Bullet>();
+                    foreach (Bullet bullet in bullet_paths[i].bullets)
                     {
-                        toBeRemoved.Add(bullet);
+                        bullet.position += bullet.velocity;
+                        Vector2 pos = bullet.position;
+                        if (pos.Y > windowHeight)
+                            toBeRemoved.Add(bullet);
+                        if (AstroidBulletCollisionDetection(bullet))
+                        {
+                            toBeRemoved.Add(bullet);
+                        }
                     }
+                    foreach (Bullet remBullet in toBeRemoved)
+                        bullet_paths[i].bullets.Remove(remBullet);
                 }
-                foreach (Bullet remBullet in toBeRemoved)
-                    bullets.Remove(remBullet);
+            }
+        }
+
+        public void UpdateBullet_Paths()
+        {
+            for (int i=0;i < bullet_paths.Count; i++)
+            {
+                bullet_paths[i].position = player.position;
             }
         }
 
@@ -160,13 +178,13 @@ namespace Game1
             if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
                 Shoot_Player();
             UpdateBullets();
+            UpdateBullet_Paths();
             GenerateRain();
 
             if (player.health.amount < 1)
             {
                 Exit();
             }
-
             base.Update(gameTime);
         }
 
@@ -235,8 +253,11 @@ namespace Game1
             spriteBatch.Draw(background_stars, new Rectangle(0, 0, windowWidth, windowHeight), Color.White);
             spriteBatch.Draw(player_texture, player.position, Color.White);
             player.health.Draw(spriteBatch);
-            foreach (Bullet bullet in bullets)
-                bullet.Draw(spriteBatch);
+            for (int i = 0; i < bullet_paths.Count; i++)
+            {
+                foreach (Bullet bullet in bullet_paths[i].bullets)
+                    bullet.Draw(spriteBatch);
+            }
             foreach (Astroid astroid in astroids)
                 astroid.Draw(spriteBatch);
             spriteBatch.End();

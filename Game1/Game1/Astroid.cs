@@ -12,12 +12,12 @@ namespace Game1
        public Vector2 position { get; set; }
        public Vector2 origin { get; set; }
        public Vector2 velocity { get; set; }
-       public int health { get; set; }
+       public double health { get; set; }
        public Rectangle rectangle { get; set; }
 
        public Texture2D texture { get; set; }
 
-       public Astroid(Texture2D texture, int health =5)
+       public Astroid(Texture2D texture, double health = 5)
        {
             this.texture = texture;
             this.health = health;
