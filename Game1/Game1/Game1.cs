@@ -68,107 +68,6 @@ namespace Game1
             // TODO: use this.Content to load your game content here
         }
 
-        public void GenerateRain()
-        {
-            if (rainDelay < 1)
-            {
-                float rdm = random.Next(0, (windowWidth-30));
-                Astroid astroid = new Astroid(enemy_astroid);
-                astroid.velocity = new Vector2((float)random.NextDouble()*2-1, 1.0f);
-                astroid.position = new Vector2(rdm, -30.0f);
-
-                astroids.Add(astroid);
-                rainDelay = rainSpeed;
-            }
-            else
-            {
-                rainDelay--;
-            }
-            
-            UpdateRain();
-        }
-
-        public void Shoot_Player()
-        {
-            if (shotDelay == 0)
-            {
-               /* Bullet newBullet = new Bullet(player_bullet_texture);
-                newBullet.velocity = new Vector2(0.0f, -15.0f);
-                newBullet.position = player.position;
-                newBullet.visible = true;
-
-                bullets.Add(newBullet);*/
-                for(int i = 0; i < bullet_paths.Count; i++)
-                {
-                    bullet_paths[i].Shoot(player_bullet_texture);
-                }
-                shotDelay = minShotDelay;
-            }
-        }
-
-        public void UpdateRain()
-        {
-            List<Astroid> toBeRemoved = new List<Astroid>();
-            if (astroids.Count > 0)
-            {
-                foreach (Astroid astroid in astroids)
-                {
-                    astroid.position += astroid.velocity;
-                    Vector2 pos = astroid.position;
-                    if (pos.Y > windowHeight)
-                    {
-                        toBeRemoved.Add(astroid);
-                    }
-                    else if(AstroidPlayerCollisionDetection(astroid))
-                    {
-                        player.health.amount += -1;
-                        toBeRemoved.Add(astroid);
-                    }
-                }
-                foreach (Astroid remAstroid in toBeRemoved)
-                    astroids.Remove(remAstroid);
-            }
-            for (int i = 0; i < astroids.Count; i++)
-            {
-                if (astroids[i].health < 1)
-                    toBeRemoved.Add(astroids[i]);
-                foreach (Astroid remAstroid in toBeRemoved)
-                    astroids.Remove(remAstroid);
-            }
-        }
-
-        public void UpdateBullets()
-        {
-            for (int i = 0; i < bullet_paths.Count; i++)
-            {
-                if (bullet_paths[i].bullets.Count > 0)
-                {
-                    List<Bullet> toBeRemoved = new List<Bullet>();
-                    foreach (Bullet bullet in bullet_paths[i].bullets)
-                    {
-                        bullet.position += bullet.velocity;
-                        Vector2 pos = bullet.position;
-                        if (pos.Y > windowHeight)
-                            toBeRemoved.Add(bullet);
-                        if (AstroidBulletCollisionDetection(bullet))
-                        {
-                            toBeRemoved.Add(bullet);
-                        }
-                    }
-                    foreach (Bullet remBullet in toBeRemoved)
-                        bullet_paths[i].bullets.Remove(remBullet);
-                }
-            }
-        }
-
-        public void UpdateBullet_Paths()
-        {
-            for (int i=0;i < bullet_paths.Count; i++)
-            {
-                bullet_paths[i].position = player.position;
-            }
-        }
-
         protected override void Update(GameTime gameTime)
         {
             if(shotDelay > 0) { shotDelay--; }
@@ -186,6 +85,26 @@ namespace Game1
                 Exit();
             }
             base.Update(gameTime);
+        }
+
+        protected override void Draw(GameTime gameTime)
+        {
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            spriteBatch.Begin();
+            spriteBatch.Draw(background_stars, new Rectangle(0, 0, windowWidth, windowHeight), Color.White);
+            spriteBatch.Draw(player_texture, player.position, Color.White);
+            player.health.Draw(spriteBatch);
+            for (int i = 0; i < bullet_paths.Count; i++)
+            {
+                foreach (Bullet bullet in bullet_paths[i].bullets)
+                    bullet.Draw(spriteBatch);
+            }
+            foreach (Astroid astroid in astroids)
+                astroid.Draw(spriteBatch);
+            spriteBatch.End();
+            // TODO: Add your drawing code here
+
+            base.Draw(gameTime);
         }
 
         public bool AstroidBulletCollisionDetection(Bullet bullet)
@@ -246,24 +165,105 @@ namespace Game1
             return false;
         }
 
-        protected override void Draw(GameTime gameTime)
+        public void GenerateRain()
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            spriteBatch.Begin();
-            spriteBatch.Draw(background_stars, new Rectangle(0, 0, windowWidth, windowHeight), Color.White);
-            spriteBatch.Draw(player_texture, player.position, Color.White);
-            player.health.Draw(spriteBatch);
+            if (rainDelay < 1)
+            {
+                float rdm = random.Next(0, (windowWidth - 30));
+                Astroid astroid = new Astroid(enemy_astroid);
+                astroid.velocity = new Vector2((float)random.NextDouble() * 2 - 1, 1.0f);
+                astroid.position = new Vector2(rdm, -30.0f);
+
+                astroids.Add(astroid);
+                rainDelay = rainSpeed;
+            }
+            else
+            {
+                rainDelay--;
+            }
+
+            UpdateRain();
+        }
+
+        public void Shoot_Player()
+        {
+            if (shotDelay == 0)
+            {
+                /* Bullet newBullet = new Bullet(player_bullet_texture);
+                 newBullet.velocity = new Vector2(0.0f, -15.0f);
+                 newBullet.position = player.position;
+                 newBullet.visible = true;
+
+                 bullets.Add(newBullet);*/
+                for (int i = 0; i < bullet_paths.Count; i++)
+                {
+                    bullet_paths[i].Shoot(player_bullet_texture);
+                }
+                shotDelay = minShotDelay;
+            }
+        }
+
+        public void UpdateRain()
+        {
+            List<Astroid> toBeRemoved = new List<Astroid>();
+            if (astroids.Count > 0)
+            {
+                foreach (Astroid astroid in astroids)
+                {
+                    astroid.position += astroid.velocity;
+                    Vector2 pos = astroid.position;
+                    if (pos.Y > windowHeight)
+                    {
+                        toBeRemoved.Add(astroid);
+                    }
+                    else if (AstroidPlayerCollisionDetection(astroid))
+                    {
+                        player.health.amount += -1;
+                        toBeRemoved.Add(astroid);
+                    }
+                }
+                foreach (Astroid remAstroid in toBeRemoved)
+                    astroids.Remove(remAstroid);
+            }
+            for (int i = 0; i < astroids.Count; i++)
+            {
+                if (astroids[i].health < 1)
+                    toBeRemoved.Add(astroids[i]);
+                foreach (Astroid remAstroid in toBeRemoved)
+                    astroids.Remove(remAstroid);
+            }
+        }
+
+        public void UpdateBullets()
+        {
             for (int i = 0; i < bullet_paths.Count; i++)
             {
-                foreach (Bullet bullet in bullet_paths[i].bullets)
-                    bullet.Draw(spriteBatch);
+                if (bullet_paths[i].bullets.Count > 0)
+                {
+                    List<Bullet> toBeRemoved = new List<Bullet>();
+                    foreach (Bullet bullet in bullet_paths[i].bullets)
+                    {
+                        bullet.position += bullet.velocity;
+                        Vector2 pos = bullet.position;
+                        if (pos.Y > windowHeight)
+                            toBeRemoved.Add(bullet);
+                        if (AstroidBulletCollisionDetection(bullet))
+                        {
+                            toBeRemoved.Add(bullet);
+                        }
+                    }
+                    foreach (Bullet remBullet in toBeRemoved)
+                        bullet_paths[i].bullets.Remove(remBullet);
+                }
             }
-            foreach (Astroid astroid in astroids)
-                astroid.Draw(spriteBatch);
-            spriteBatch.End();
-            // TODO: Add your drawing code here
+        }
 
-            base.Draw(gameTime);
+        public void UpdateBullet_Paths()
+        {
+            for (int i = 0; i < bullet_paths.Count; i++)
+            {
+                bullet_paths[i].position = player.position;
+            }
         }
     }
 }
