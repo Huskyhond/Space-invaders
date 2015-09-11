@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 namespace Game1
 {
+    // Joey heeft ook een commit gedaan wajow
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
