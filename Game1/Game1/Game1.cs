@@ -60,7 +60,7 @@ namespace Game1
             player_texture = Content.Load<Texture2D>("Fighter_small.png");
             background_stars = Content.Load<Texture2D>("background_stars.png");
             player_bullet_texture = Content.Load<Texture2D>("player_bullet_left.png");
-            enemy_astroid = Content.Load<Texture2D>("astroid.png");
+            enemy_astroid = Content.Load<Texture2D>("asteroid.png");
             healthbar = Content.Load<Texture2D>("healthBar.png");
             // TODO: use this.Content to load your game content here
         }
