@@ -21,6 +21,7 @@ namespace Game1
         Texture2D player_bullet_texture;
         Texture2D enemy_astroid;
         Texture2D healthbar;
+        Texture2D powerup_texture;
         Player player;
         Health health;
         int windowHeight;
@@ -28,6 +29,7 @@ namespace Game1
         //List<Bullet> bullets = new List<Bullet>();
         List<Astroid> astroids = new List<Astroid>();
         List<Bullet_Path> bullet_paths = new List<Bullet_Path>();
+        List<Powerup> powerups = new List<Powerup>();
 
 
         //settings
@@ -52,8 +54,8 @@ namespace Game1
             health = new Health(healthbar);
             player = new Player(player_texture, health, bullet_paths);
             player.health.position = new Vector2(600, 450);
-            bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -10.0f), new List<Bullet>(), new Vector2(0,0)));
-            bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -10.0f), new List<Bullet>(), new Vector2(25,0)));
+            bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -10.0f), new List<Bullet>(), new Vector2(0, 0)));
+            bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -10.0f), new List<Bullet>(), new Vector2(25, 0)));
         }
 
         protected override void LoadContent()
@@ -65,17 +67,19 @@ namespace Game1
             player_bullet_texture = Content.Load<Texture2D>("player_bullet_left.png");
             enemy_astroid = Content.Load<Texture2D>("asteroid.png");
             healthbar = Content.Load<Texture2D>("healthBar.png");
+            powerup_texture = Content.Load<Texture2D>("powerup1.png");
             // TODO: use this.Content to load your game content here
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if(shotDelay > 0) { shotDelay--; }
-            player.position = new Vector2(Mouse.GetState().X,Mouse.GetState().Y);
+            if (shotDelay > 0) { shotDelay--; }
+            player.position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
                 Shoot_Player();
+            UpdatePowerup();
             UpdateBullets();
             UpdateBullet_Paths();
             GenerateRain();
@@ -101,6 +105,8 @@ namespace Game1
             }
             foreach (Astroid astroid in astroids)
                 astroid.Draw(spriteBatch);
+            foreach (Powerup powerup in powerups)
+                powerup.Draw(spriteBatch);
             spriteBatch.End();
             // TODO: Add your drawing code here
 
@@ -121,10 +127,6 @@ namespace Game1
 
                 float astroidMinY = astroids[i].position.Y;
                 float astroidMaxY = (astroids[i].position.Y + astroids[i].texture.Bounds.Height);
-
-               //Depricated Collision detection values
-               // float middroidX = (astroidMinX + ((astroidMaxX - astroidMinX) / 2));
-               // float middroidY = (astroidMinY + ((astroidMaxY - astroidMinY) / 2));
 
                 if (astroidMinX < bulletMinX && astroidMaxX > bulletMinX && astroidMinX < bulletMaxX && astroidMaxX > bulletMaxX)
                 {
@@ -152,13 +154,38 @@ namespace Game1
             float astroidMinY = astroid.position.Y;
             float astroidMaxY = (astroid.position.Y + astroid.texture.Bounds.Height);
 
-            float middroidX = (astroidMinX + ((astroidMaxX - astroidMinX)/2));
+            float middroidX = (astroidMinX + ((astroidMaxX - astroidMinX) / 2));
             float middroidY = (astroidMinY + ((astroidMaxY - astroidMinY) / 2));
 
             if (middroidX > playerMinX && middroidX < playerMaxX)
             {
                 if (middroidY > playerMinY && middroidY < playerMaxY)
                 {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool PowerupPlayerCollisionDetection(Powerup powerup)
+        {
+            float playerMinX = player.position.X;
+            float playerMaxX = (player.position.X + player_texture.Bounds.Width);
+
+            float playerMinY = player.position.Y;
+            float playerMaxY = (player.position.Y + player_texture.Bounds.Height);
+
+            float powerupMinY = powerup.position.Y;
+            float powerupMaxY = (powerup.position.Y + powerup.texture.Bounds.Height);
+
+            float powerupMinX = powerup.position.X;
+            float powerupMaxX = (powerup.position.X + powerup.texture.Bounds.Width);
+
+            if (playerMinX < powerupMinX && playerMaxX > powerupMinX && playerMinX < powerupMaxX && playerMaxX > powerupMaxX)
+            {
+                if (playerMinY < powerupMinY && playerMaxY > powerupMinY && playerMinY < powerupMaxY && playerMaxY > powerupMaxY)
+                {
+                    powerups.Add(powerup);
                     return true;
                 }
             }
@@ -173,7 +200,6 @@ namespace Game1
                 Astroid astroid = new Astroid(enemy_astroid);
                 astroid.velocity = new Vector2((float)random.NextDouble() * 2 - 1, 1.0f);
                 astroid.position = new Vector2(rdm, -30.0f);
-
                 astroids.Add(astroid);
                 rainDelay = rainSpeed;
             }
@@ -181,7 +207,6 @@ namespace Game1
             {
                 rainDelay--;
             }
-
             UpdateRain();
         }
 
@@ -189,18 +214,18 @@ namespace Game1
         {
             if (shotDelay == 0)
             {
-                /* Bullet newBullet = new Bullet(player_bullet_texture);
-                 newBullet.velocity = new Vector2(0.0f, -15.0f);
-                 newBullet.position = player.position;
-                 newBullet.visible = true;
-
-                 bullets.Add(newBullet);*/
                 for (int i = 0; i < bullet_paths.Count; i++)
                 {
                     bullet_paths[i].Shoot(player_bullet_texture);
                 }
                 shotDelay = minShotDelay;
             }
+        }
+
+        public void Shoot_Powerup(Vector2 position)
+        {
+            Powerup newPowerup = new Powerup(position, new Vector2(0, 3), powerup_texture);
+            powerups.Add(newPowerup);
         }
 
         public void UpdateRain()
@@ -228,7 +253,13 @@ namespace Game1
             for (int i = 0; i < astroids.Count; i++)
             {
                 if (astroids[i].health < 1)
+                {
                     toBeRemoved.Add(astroids[i]);
+                    if (random.NextDouble() > 0.9)
+                    {
+                        Shoot_Powerup(astroids[i].position);
+                    }
+                }
                 foreach (Astroid remAstroid in toBeRemoved)
                     astroids.Remove(remAstroid);
             }
@@ -263,6 +294,34 @@ namespace Game1
             for (int i = 0; i < bullet_paths.Count; i++)
             {
                 bullet_paths[i].position = player.position;
+            }
+        }
+
+        public void UpdatePowerup()
+        {
+            if (!player.powerup1)
+            {
+                List<Powerup> toBeRemoved = new List<Powerup>();
+                foreach (Powerup powerup in powerups)
+                {
+                    powerup.position += powerup.velocity;
+                    Vector2 pos = powerup.position;
+                    if (pos.Y > windowHeight)
+                    {
+                        toBeRemoved.Add(powerup);
+                    }
+                    else if (PowerupPlayerCollisionDetection(powerup))
+                    {
+                        toBeRemoved.Add(powerup);
+                        player.powerup1 = true;
+                    }
+                }
+                foreach (Powerup remPowerup in toBeRemoved)
+                    powerups.Remove(remPowerup);
+            }
+            else
+            {
+                bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -10.0f), new List<Bullet>(), new Vector2(5, 0)));
             }
         }
     }

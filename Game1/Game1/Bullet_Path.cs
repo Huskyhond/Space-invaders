@@ -26,7 +26,6 @@ namespace Game1
             Bullet newBullet = new Bullet(texture);
             newBullet.velocity = velocity;
             newBullet.position = position + offset;
-
             bullets.Add(newBullet);
         }
 
