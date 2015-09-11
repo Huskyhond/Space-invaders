@@ -14,16 +14,18 @@ namespace Game1
         public Vector2 origin { get; set; }
         public Vector2 velocity { get; set; }
         public Boolean visible { get; set;}
+        public Rectangle rectangle { get; set; }
 
         public Bullet(Texture2D texture)
         {
             this.texture = texture;
             visible = false;
+            rectangle = new Rectangle(0, 0, 5, 10);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, position, null, Color.White, 0f, origin, 1f,SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, position, rectangle, Color.White, 0f, origin, 1f,SpriteEffects.None, 0);
         }
     }
 }

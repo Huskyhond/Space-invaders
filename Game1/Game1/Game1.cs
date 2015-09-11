@@ -14,10 +14,6 @@ namespace Game1
     {
         Random random = new Random();
 
-        int windowWidth = 800;
-        int windowHeight = 600;
-        int rainSpeed = 20; // frames per astroid
-
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Texture2D player_texture;
@@ -27,16 +23,17 @@ namespace Game1
         Texture2D healthbar;
         Player player;
         Health health;
+        int windowHeight;
+        int windowWidth;
+        List<Bullet> bullets = new List<Bullet>();
+        List<Astroid> astroids = new List<Astroid>();
 
 
         //settings
         const int minShotDelay = 5; // frames
-
         int shotDelay = 0;
-        
         int rainDelay = 0;
-        List<Bullet> bullets = new List<Bullet>();
-        List<Astroid> astroids = new List<Astroid>();
+        int rainSpeed = 20; // frames per astroid
 
         public Game1()
         {
@@ -62,7 +59,7 @@ namespace Game1
             spriteBatch = new SpriteBatch(GraphicsDevice);
             player_texture = Content.Load<Texture2D>("Fighter_small.png");
             background_stars = Content.Load<Texture2D>("background_stars.png");
-            player_bullet_texture = Content.Load<Texture2D>("player_bullet.png");
+            player_bullet_texture = Content.Load<Texture2D>("player_bullet_left.png");
             enemy_astroid = Content.Load<Texture2D>("astroid.png");
             healthbar = Content.Load<Texture2D>("healthBar.png");
             // TODO: use this.Content to load your game content here
@@ -74,7 +71,7 @@ namespace Game1
             {
                 float rdm = random.Next(0, (windowWidth-30));
                 Astroid astroid = new Astroid(enemy_astroid);
-                astroid.velocity = new Vector2((float)random.NextDouble(), 1.0f);
+                astroid.velocity = new Vector2((float)random.NextDouble()*2-1, 1.0f);
                 astroid.position = new Vector2(rdm, -30.0f);
 
                 astroids.Add(astroid);
@@ -188,12 +185,13 @@ namespace Game1
                 float astroidMinY = astroids[i].position.Y;
                 float astroidMaxY = (astroids[i].position.Y + astroids[i].texture.Bounds.Height);
 
-                float middroidX = (astroidMinX + ((astroidMaxX - astroidMinX) / 2));
-                float middroidY = (astroidMinY + ((astroidMaxY - astroidMinY) / 2));
+               //Depricated Collision detection values
+               // float middroidX = (astroidMinX + ((astroidMaxX - astroidMinX) / 2));
+               // float middroidY = (astroidMinY + ((astroidMaxY - astroidMinY) / 2));
 
-                if (middroidX > bulletMinX && middroidX < bulletMaxX)
+                if (astroidMinX < bulletMinX && astroidMaxX > bulletMinX && astroidMinX < bulletMaxX && astroidMaxX > bulletMaxX)
                 {
-                    if (middroidY > bulletMinY && middroidY < bulletMaxY)
+                    if (astroidMinY < bulletMinY && astroidMaxY > bulletMinY && astroidMinY < bulletMaxY && astroidMaxY > bulletMaxY)
                     {
                         astroids[i].health--;
                         return true;
