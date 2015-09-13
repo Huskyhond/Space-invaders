@@ -50,7 +50,7 @@ namespace Game1
             base.Initialize();
             Rectangle b = GraphicsDevice.Viewport.Bounds;
             windowWidth = b.Width;
-            windowHeight = b.Height;
+            windowHeight = b.Height -200;
             health = new Health(healthbar);
             player = new Player(player_texture, health, bullet_paths);
             player.health.position = new Vector2(600, 450);
@@ -79,10 +79,10 @@ namespace Game1
                 Exit();
             if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
                 Shoot_Player();
-            UpdatePowerup();
             UpdateBullets();
             UpdateBullet_Paths();
             GenerateRain();
+            UpdatePowerup();
 
             if (player.health.amount < 1)
             {
@@ -181,11 +181,14 @@ namespace Game1
             float powerupMinX = powerup.position.X;
             float powerupMaxX = (powerup.position.X + powerup.texture.Bounds.Width);
 
-            if (playerMinX < powerupMinX && playerMaxX > powerupMinX && playerMinX < powerupMaxX && playerMaxX > powerupMaxX)
+            float midpowerX = (powerupMinX + ((powerupMaxX - powerupMinX) / 2));
+            float midpowerY = (powerupMinY + ((powerupMaxY - powerupMinY) / 2));
+
+            if (midpowerX > playerMinX && midpowerX < playerMaxX)
             {
-                if (playerMinY < powerupMinY && playerMaxY > powerupMinY && playerMinY < powerupMaxY && playerMaxY > powerupMaxY)
+                if (midpowerY > playerMinY && midpowerY < playerMaxY)
                 {
-                    powerups.Add(powerup);
+                    bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -10.0f), new List<Bullet>(), new Vector2(12, 0)));
                     return true;
                 }
             }
@@ -299,7 +302,7 @@ namespace Game1
 
         public void UpdatePowerup()
         {
-            if (!player.powerup1)
+            if (powerups.Count > 0)
             {
                 List<Powerup> toBeRemoved = new List<Powerup>();
                 foreach (Powerup powerup in powerups)
@@ -310,7 +313,7 @@ namespace Game1
                     {
                         toBeRemoved.Add(powerup);
                     }
-                    else if (PowerupPlayerCollisionDetection(powerup))
+                    else if (!player.powerup1 && PowerupPlayerCollisionDetection(powerup))
                     {
                         toBeRemoved.Add(powerup);
                         player.powerup1 = true;
@@ -318,10 +321,6 @@ namespace Game1
                 }
                 foreach (Powerup remPowerup in toBeRemoved)
                     powerups.Remove(remPowerup);
-            }
-            else
-            {
-                bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -10.0f), new List<Bullet>(), new Vector2(5, 0)));
             }
         }
     }
