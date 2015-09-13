@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -26,7 +27,7 @@ namespace Game1
         Health health;
         int windowHeight;
         int windowWidth;
-        //List<Bullet> bullets = new List<Bullet>();
+        SoundEffect player_shoot;
         List<Astroid> astroids = new List<Astroid>();
         List<Bullet_Path> bullet_paths = new List<Bullet_Path>();
         List<Powerup> powerups = new List<Powerup>();
@@ -50,7 +51,7 @@ namespace Game1
             base.Initialize();
             Rectangle b = GraphicsDevice.Viewport.Bounds;
             windowWidth = b.Width;
-            windowHeight = b.Height -200;
+            windowHeight = b.Height;
             health = new Health(healthbar);
             player = new Player(player_texture, health, bullet_paths);
             player.health.position = new Vector2(600, 450);
@@ -68,6 +69,7 @@ namespace Game1
             enemy_astroid = Content.Load<Texture2D>("asteroid.png");
             healthbar = Content.Load<Texture2D>("healthBar.png");
             powerup_texture = Content.Load<Texture2D>("powerup1.png");
+            player_shoot = Content.Load<SoundEffect>("player_shoot.wav");
             // TODO: use this.Content to load your game content here
         }
 
@@ -78,7 +80,10 @@ namespace Game1
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
+            {
                 Shoot_Player();
+                player_shoot.Play();
+            }
             UpdateBullets();
             UpdateBullet_Paths();
             GenerateRain();
