@@ -31,6 +31,7 @@ namespace Game1
         List<Astroid> astroids = new List<Astroid>();
         List<Bullet_Path> bullet_paths = new List<Bullet_Path>();
         List<Powerup> powerups = new List<Powerup>();
+        List<Astroid> toBeRemoved = new List<Astroid>();
 
 
         //settings
@@ -69,7 +70,7 @@ namespace Game1
             enemy_astroid = Content.Load<Texture2D>("asteroid.png");
             healthbar = Content.Load<Texture2D>("healthBar.png");
             powerup_texture = Content.Load<Texture2D>("powerup1.png");
-            player_shoot = Content.Load<SoundEffect>("player_shoot.wav");
+            //player_shoot = Content.Load<SoundEffect>("player_shoot.wav");
             // TODO: use this.Content to load your game content here
         }
 
@@ -82,7 +83,7 @@ namespace Game1
             if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
             {
                 Shoot_Player();
-                player_shoot.Play();
+                //player_shoot.Play();
             }
             UpdateBullets();
             UpdateBullet_Paths();
@@ -238,7 +239,6 @@ namespace Game1
 
         public void UpdateRain()
         {
-            List<Astroid> toBeRemoved = new List<Astroid>();
             if (astroids.Count > 0)
             {
                 foreach (Astroid astroid in astroids)
@@ -271,6 +271,11 @@ namespace Game1
                 foreach (Astroid remAstroid in toBeRemoved)
                     astroids.Remove(remAstroid);
             }
+        }
+
+        public void HealthHUD()
+        {
+
         }
 
         public void UpdateBullets()
