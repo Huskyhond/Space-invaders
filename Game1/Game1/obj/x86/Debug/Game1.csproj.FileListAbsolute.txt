@@ -8,7 +8,6 @@ C:\Users\joey\Desktop\Des Patts Project\TIRPRO015A_0893282_0890813_0835560_08890
 C:\Users\joey\Desktop\Des Patts Project\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\player_bullet.png
 C:\Users\joey\Desktop\Des Patts Project\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\player_bullet_left.png
 C:\Users\joey\Desktop\Des Patts Project\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\player_bullet_right.png
-C:\Users\joey\Desktop\Des Patts Project\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\player_shoot.wav
 C:\Users\joey\Desktop\Des Patts Project\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\powerup1.png
 C:\Users\joey\Desktop\Des Patts Project\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Game1.exe
 C:\Users\joey\Desktop\Des Patts Project\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Game1.pdb
@@ -36,3 +35,4 @@ C:\Users\joey\Desktop\Des Patts Project\TIRPRO015A_0893282_0890813_0835560_08890
 C:\Users\joey\Desktop\Des Patts Project\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\obj\x86\Debug\Game1.exe
 C:\Users\joey\Desktop\Des Patts Project\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\obj\x86\Debug\Game1.pdb
 C:\Users\joey\Desktop\Des Patts Project\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\healthplus.jpg
+C:\Users\joey\Desktop\Des Patts Project\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\obj\x86\Debug\Game1.g.resources
