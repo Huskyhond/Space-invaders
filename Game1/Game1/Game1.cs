@@ -70,7 +70,8 @@ namespace Game1
             enemy_astroid = Content.Load<Texture2D>("asteroid.png");
             healthbar = Content.Load<Texture2D>("healthBar.png");
             powerup_texture = Content.Load<Texture2D>("powerup1.png");
-            player_shoot = Content.Load<SoundEffect>("player_shoot.wav");
+            //player_shoot = Content.Load<SoundEffect>("player_shoot.wav");
+
             // TODO: use this.Content to load your game content here
         }
 
