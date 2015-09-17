@@ -18,6 +18,7 @@ namespace Game1
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Texture2D player_texture, background_stars, player_bullet_texture, enemy_astroid, healthbar, powerup_texture;
+        SpriteFont font;
         Player player;
         Health health;
         int windowHeight, windowWidth;
@@ -49,7 +50,7 @@ namespace Game1
             {
                 case 0:
                     vpcstate = 1;
-                    line1AmountOfAstroids = random.Next(10, 100);
+                    line1AmountOfAstroids = random.Next(10, 20);
                     iLine1 = 0;
                     astroidWaitLine3 = (float)random.Next(5000, 7000);
                     astroidWaitLine2 = 0;
@@ -96,6 +97,7 @@ namespace Game1
             health = new Health(healthbar);
             player = new Player(player_texture, health, bullet_paths);
             player.health.position = new Vector2(600, 450);
+
             bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -10.0f), new List<Bullet>(), new Vector2(0, 0)));
             bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -10.0f), new List<Bullet>(), new Vector2(25, 0)));
         }
@@ -112,7 +114,7 @@ namespace Game1
             powerup_texture = Content.Load<Texture2D>("powerup1.png");
             background.Load(GraphicsDevice, background_stars);
             //player_shoot = Content.Load<SoundEffect>("player_shoot.wav");
-
+            font = Content.Load<SpriteFont>("GameFont");
             // TODO: use this.Content to load your game content here
         }
 
@@ -170,6 +172,7 @@ namespace Game1
                 astroid.Draw(spriteBatch);
             foreach (Powerup powerup in powerups)
                 powerup.Draw(spriteBatch);
+            spriteBatch.DrawString(font, "Score: " + player.score, new Vector2(health.position.X, health.position.Y-20.0f), Color.White);
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -193,6 +196,9 @@ namespace Game1
                 if (astroidMinY < bulletMinY && astroidMaxY > bulletMinY && astroidMinY < bulletMaxY && astroidMaxY > bulletMaxY)
                 {
                     astroid.health--;
+                    if (astroid.health < 1)  
+                        player.score += 500;
+                        
                     return true;
                 }
             }
@@ -220,6 +226,8 @@ namespace Game1
             {
                 if (middroidY > playerMinY && middroidY < playerMaxY)
                 {
+                    player.health.amount--;
+                    astroid.health = 0;
                     return true;
                 }
             }
@@ -266,7 +274,8 @@ namespace Game1
                                      astroid.position.X <= windowWidth &&
                                      astroid.position.X > -astroid.texture.Width &&
                                      astroid.position.Y > -astroid.texture.Height &&
-                                     astroid.health > 0
+                                     astroid.health > 0 &&
+                                     !AstroidPlayerCollisionDetection(astroid)
                                select astroid).ToList<Astroid>();
             foreach (var astroid in currentRain)
                 astroid.position += astroid.velocity;
@@ -280,8 +289,8 @@ namespace Game1
                                  from astroid in astroids
                                  where AstroidBulletCollisionDetection(bullet, astroid)
                                  select astroid
-                                 where bullet.position.X <= windowHeight &&
-                                       bullet.position.X <= windowWidth &&
+                                 where bullet.position.X <= windowWidth &&
+                                       bullet.position.Y <= windowHeight &&
                                        bullet.position.X > -bullet.texture.Width &&
                                        bullet.position.Y > -bullet.texture.Height &&
                                        colliders.Count() == 0

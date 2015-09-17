@@ -17,7 +17,7 @@ namespace Game1
 
        public Texture2D texture { get; set; }
 
-       public Astroid(Texture2D texture, Vector2 position = new Vector2(), Vector2 velocity = new Vector2(), double health = 5)
+       public Astroid(Texture2D texture, Vector2 position = new Vector2(), Vector2 velocity = new Vector2(), double health = 2)
        {
             this.texture = texture;
             this.health = health;

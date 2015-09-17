@@ -17,8 +17,11 @@ namespace Game1
         public List<Bullet_Path> bullet_path { get; set; }
         public Boolean powerup1 { get; set; }
 
+        public int score { get; set; }
+
         public Player(Texture2D texture, Health health, List<Bullet_Path> bullet_path)
         {
+            ////this.score = 0;
             this.health = health;
             this.texture = texture;
             this.bullet_path = bullet_path;
