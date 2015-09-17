@@ -19,3 +19,9 @@
 /processorParam:TextureFormat=Compressed
 /build:GameFont.spritefont
 
+#begin player_shoot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:player_shoot.wav
+

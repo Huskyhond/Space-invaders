@@ -27,6 +27,7 @@ namespace Game1
         List<Bullet> bullets = new List<Bullet>();
         List<Powerup> powerups = new List<Powerup>();
         List<Astroid> toBeRemoved = new List<Astroid>();
+        SoundEffect bulletshot;
 
         float deltaTime = 0.0f;
 
@@ -113,7 +114,7 @@ namespace Game1
             healthbar = Content.Load<Texture2D>("healthBar.png");
             powerup_texture = Content.Load<Texture2D>("powerup1.png");
             background.Load(GraphicsDevice, background_stars);
-            //player_shoot = Content.Load<SoundEffect>("player_shoot.wav");
+            bulletshot = Content.Load<SoundEffect>("player_shoot");
             font = Content.Load<SpriteFont>("GameFont");
             // TODO: use this.Content to load your game content here
         }
@@ -139,6 +140,7 @@ namespace Game1
                 {
                     bullets.Add(new Bullet(player_bullet_texture, player.position, new Vector2(0.0f, -10.0f)));
                     shotDelay = minShotDelay;
+                    bulletshot.Play();
                 }
             }
 
