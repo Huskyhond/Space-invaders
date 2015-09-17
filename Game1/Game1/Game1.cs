@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Linq; 
 using System.Collections.Generic;
 
 namespace Game1
@@ -14,31 +15,70 @@ namespace Game1
     public class Game1 : Game
     {
         Random random = new Random();
-
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Texture2D player_texture;
-        Texture2D background_stars;
-        Texture2D player_bullet_texture;
-        Texture2D enemy_astroid;
-        Texture2D healthbar;
-        Texture2D powerup_texture;
+        Texture2D player_texture, background_stars, player_bullet_texture, enemy_astroid, healthbar, powerup_texture;
         Player player;
         Health health;
-        int windowHeight;
-        int windowWidth;
-        SoundEffect player_shoot;
+        int windowHeight, windowWidth;
         List<Astroid> astroids = new List<Astroid>();
         List<Bullet_Path> bullet_paths = new List<Bullet_Path>();
+        List<Bullet> bullets = new List<Bullet>();
         List<Powerup> powerups = new List<Powerup>();
         List<Astroid> toBeRemoved = new List<Astroid>();
 
+        float deltaTime = 0.0f;
+
+        //Background_properties
+        private ScrollingBackground background = new ScrollingBackground();
+        private Vector2 screenpos;
+        private Texture2D mytexture;
+
+        // Virtual pc
+        int vpcstate = 0;
+        int line1AmountOfAstroids, iLine1;
+        float astroidWaitLine2, astroidWaitLine3;
 
         //settings
         const int minShotDelay = 5; // frames
         int shotDelay = 0;
-        int rainDelay = 0;
-        int rainSpeed = 20; // frames per astroid
+
+        public void AstroidStateChanger()
+        {
+            switch (vpcstate)
+            {
+                case 0:
+                    vpcstate = 1;
+                    line1AmountOfAstroids = random.Next(10, 100);
+                    iLine1 = 0;
+                    astroidWaitLine3 = (float)random.Next(5000, 7000);
+                    astroidWaitLine2 = 0;
+                    break;
+                case 1:
+                    if(line1AmountOfAstroids > iLine1)
+                        vpcstate = 2;
+                    else
+                        vpcstate = 3;
+                    break;
+                case 2:
+                    astroidWaitLine2 -= deltaTime;
+                    if (astroidWaitLine2 <= 0)
+                    {
+                        Astroid astroid = new Astroid(enemy_astroid);
+                        astroids.Add(new Astroid(enemy_astroid, new Vector2((float)random.Next(windowWidth), 0.0f), new Vector2(0.0f, 1.0f)));
+                        iLine1++;
+                        vpcstate = 1;
+                        astroidWaitLine2 = (float)(random.NextDouble() * 0.2 + 50);
+                    }
+                    break;
+                case 3:
+                    astroidWaitLine3 -= deltaTime;
+                    if (astroidWaitLine3 <= 0)
+                        vpcstate = 0;
+                    break;
+
+            }
+        }
 
         public Game1()
         {
@@ -70,31 +110,47 @@ namespace Game1
             enemy_astroid = Content.Load<Texture2D>("asteroid.png");
             healthbar = Content.Load<Texture2D>("healthBar.png");
             powerup_texture = Content.Load<Texture2D>("powerup1.png");
+            background.Load(GraphicsDevice, background_stars);
             //player_shoot = Content.Load<SoundEffect>("player_shoot.wav");
 
             // TODO: use this.Content to load your game content here
         }
 
+        public void Update_Background(float deltaY)
+        {
+            screenpos.Y += deltaY;
+            screenpos.Y = screenpos.Y % mytexture.Height;
+        }
+
         protected override void Update(GameTime gameTime)
         {
-            if (shotDelay > 0) { shotDelay--; }
+            deltaTime = ((float)gameTime.ElapsedGameTime.TotalMilliseconds - deltaTime);
+
+            if (shotDelay > 0)
+                shotDelay--;
             player.position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
             {
-                Shoot_Player();
-                player_shoot.Play();
+                if (shotDelay == 0)
+                {
+                    bullets.Add(new Bullet(player_bullet_texture, player.position, new Vector2(0.0f, -10.0f)));
+                    shotDelay = minShotDelay;
+                }
             }
-            UpdateBullets();
-            UpdateBullet_Paths();
-            GenerateRain();
-            UpdatePowerup();
+
+            List<Astroid> rain = GenerateRain();
+            List<Bullet> bulletrain = UpdateBullet();
 
             if (player.health.amount < 1)
-            {
                 Exit();
-            }
+
+            // COMMIT CHANGES
+            astroids = rain;
+            bullets = bulletrain;
+            background.Update(deltaTime / 5);
+
             base.Update(gameTime);
         }
 
@@ -102,12 +158,12 @@ namespace Game1
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
-            spriteBatch.Draw(background_stars, new Rectangle(0, 0, windowWidth, windowHeight), Color.White);
+            background.Draw(spriteBatch);
             spriteBatch.Draw(player_texture, player.position, Color.White);
             player.health.Draw(spriteBatch);
-            for (int i = 0; i < bullet_paths.Count; i++)
+            for (int i = 0; i < bullets.Count; i++)
             {
-                foreach (Bullet bullet in bullet_paths[i].bullets)
+                foreach (Bullet bullet in bullets)
                     bullet.Draw(spriteBatch);
             }
             foreach (Astroid astroid in astroids)
@@ -115,8 +171,6 @@ namespace Game1
             foreach (Powerup powerup in powerups)
                 powerup.Draw(spriteBatch);
             spriteBatch.End();
-            // TODO: Add your drawing code here
-
             base.Draw(gameTime);
         }
 
@@ -202,47 +256,56 @@ namespace Game1
             return false;
         }
 
-        public void GenerateRain()
+        public List<Astroid> GenerateRain()
         {
-            if (rainDelay < 1)
-            {
-                float rdm = random.Next(0, (windowWidth - 30));
-                Astroid astroid = new Astroid(enemy_astroid);
-                astroid.velocity = new Vector2((float)random.NextDouble() * 2 - 1, 1.0f);
-                astroid.position = new Vector2(rdm, -30.0f);
-                astroids.Add(astroid);
-                rainDelay = rainSpeed;
-            }
-            else
-            {
-                rainDelay--;
-            }
-            UpdateRain();
+            AstroidStateChanger();
+            var currentRain = (from astroid in astroids
+                               let colliders = 
+                               from bullet in bullets
+                               where AstroidBulletCollisionDetection(bullet)
+                               select bullet
+                               where astroid.position.Y <= windowHeight &&
+                                     astroid.position.X <= windowWidth &&
+                                     astroid.position.X > -astroid.texture.Width &&
+                                     astroid.position.Y > -astroid.texture.Height &&
+                                     colliders.Count() == 0
+                               select astroid).ToList<Astroid>();
+            foreach (var astroid in currentRain)
+                astroid.position += astroid.velocity;
+            return currentRain;
         }
 
-        public void Shoot_Player()
+        public List<Bullet> UpdateBullet()
         {
-            if (shotDelay == 0)
-            {
-                for (int i = 0; i < bullet_paths.Count; i++)
-                {
-                    bullet_paths[i].Shoot(player_bullet_texture);
-                }
-                shotDelay = minShotDelay;
-            }
+            var currentBullet = (from bullet in bullets
+                                 let colliders =
+                                 from astroid in astroids
+                                 where AstroidBulletCollisionDetection(bullet)
+                                 select astroid
+                                 where bullet.position.X <= windowHeight &&
+                                       bullet.position.X <= windowWidth &&
+                                       bullet.position.X > -bullet.texture.Width &&
+                                       bullet.position.Y > -bullet.texture.Height &&
+                                       colliders.Count() == 0
+                                 select bullet).ToList<Bullet>();
+            foreach (var bullet in currentBullet)
+                bullet.position += bullet.velocity;
+            return currentBullet;
         }
 
+        [Obsolete("Shoot_Powerup() is deprecated, please use generatePowerup() instead", true)]
         public void Shoot_Powerup(Vector2 position)
         {
             Powerup newPowerup = new Powerup(position, new Vector2(0, 3), powerup_texture);
             powerups.Add(newPowerup);
         }
 
-        public void UpdateRain()
+        [Obsolete("UpdateRain() is deprecated, please use GenerateRain() instead.", true)]
+        public void UpdateRain(List<Astroid> newRain)
         {
-            if (astroids.Count > 0)
+            if (newRain.Count > 0)
             {
-                foreach (Astroid astroid in astroids)
+                foreach (Astroid astroid in newRain)
                 {
                     astroid.position += astroid.velocity;
                     Vector2 pos = astroid.position;
@@ -272,11 +335,6 @@ namespace Game1
                 foreach (Astroid remAstroid in toBeRemoved)
                     astroids.Remove(remAstroid);
             }
-        }
-
-        public void HealthHUD()
-        {
-
         }
 
         public void UpdateBullets()
@@ -333,6 +391,20 @@ namespace Game1
                 foreach (Powerup remPowerup in toBeRemoved)
                     powerups.Remove(remPowerup);
             }
+        }
+
+        public List<Powerup> generatePowerup()
+        {
+            var currentPowerups = (from powerup in powerups
+                               where powerup.position.Y <= windowHeight &&
+                                     powerup.position.X <= windowWidth &&
+                                     powerup.position.X > -powerup.texture.Width &&
+                                     powerup.position.Y > -powerup.texture.Height
+                               select powerup).ToList<Powerup>();
+
+            foreach (var powerup in currentPowerups)
+                powerup.position += powerup.velocity;
+            return currentPowerups;
         }
     }
 }

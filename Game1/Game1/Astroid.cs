@@ -17,11 +17,13 @@ namespace Game1
 
        public Texture2D texture { get; set; }
 
-       public Astroid(Texture2D texture, double health = 5)
+       public Astroid(Texture2D texture, Vector2 position = new Vector2(), Vector2 velocity = new Vector2(), double health = 5)
        {
             this.texture = texture;
             this.health = health;
             rectangle = new Rectangle(0, 0, 40, 40);
+            this.position = position;
+            this.velocity = velocity;
        }
        public void Draw(SpriteBatch spriteBatch)
        {
