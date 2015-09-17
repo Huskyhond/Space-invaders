@@ -23,7 +23,7 @@ namespace Game1
 
         public void Shoot(Texture2D texture)
         {
-            Bullet newBullet = new Bullet(texture, new Vector2(10,10), new Vector2(0,0));
+            Bullet newBullet = new Bullet(texture);
             newBullet.velocity = velocity;
             newBullet.position = position + offset;
             bullets.Add(newBullet);

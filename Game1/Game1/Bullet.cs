@@ -15,11 +15,9 @@ namespace Game1
         public Vector2 velocity { get; set; }
         public Rectangle rectangle { get; set; }
 
-        public Bullet(Texture2D texture, Vector2 position, Vector2 velocity)
+        public Bullet(Texture2D texture)
         {
             this.texture = texture;
-            this.position = position;
-            this.velocity = velocity;
             rectangle = new Rectangle(0, 0, 5, 10);
         }
 

@@ -8,9 +8,8 @@ using System.Collections.Generic;
 
 namespace Game1
 {
-    // Joey heeft ook een commit gedaan wajow
     /// <summary>
-    /// This is the main type for your game.
+    /// Simple Space shooter
     /// </summary>
     public class Game1 : Game
     {
@@ -22,19 +21,21 @@ namespace Game1
         Player player;
         Health health;
         int windowHeight, windowWidth;
+        SoundEffect bulletshot;
+
+        float deltaTime = 0.0f;
+
+        //Lists
         List<Astroid> astroids = new List<Astroid>();
         List<Bullet_Path> bullet_paths = new List<Bullet_Path>();
         List<Bullet> bullets = new List<Bullet>();
         List<Powerup> powerups = new List<Powerup>();
         List<Astroid> toBeRemoved = new List<Astroid>();
-        SoundEffect bulletshot;
-
-        float deltaTime = 0.0f;
+        List<Bullet> bulletrain = new List<Bullet>();
 
         //Background_properties
         private ScrollingBackground background = new ScrollingBackground();
         private Vector2 screenpos;
-        private Texture2D mytexture;
 
         // Virtual pc
         int vpcstate = 0;
@@ -98,9 +99,8 @@ namespace Game1
             health = new Health(healthbar);
             player = new Player(player_texture, health, bullet_paths);
             player.health.position = new Vector2(600, 450);
-
-            bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -10.0f), new List<Bullet>(), new Vector2(0, 0)));
-            bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -10.0f), new List<Bullet>(), new Vector2(25, 0)));
+            bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -5.0f), new List<Bullet>(), new Vector2(0, 0)));
+            bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -5.0f), new List<Bullet>(), new Vector2(25, 0)));
         }
 
         protected override void LoadContent()
@@ -122,13 +122,11 @@ namespace Game1
         public void Update_Background(float deltaY)
         {
             screenpos.Y += deltaY;
-            screenpos.Y = screenpos.Y % mytexture.Height;
         }
 
         protected override void Update(GameTime gameTime)
         {
             deltaTime = ((float)gameTime.ElapsedGameTime.TotalMilliseconds - deltaTime);
-
             if (shotDelay > 0)
                 shotDelay--;
             player.position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
@@ -138,21 +136,24 @@ namespace Game1
             {
                 if (shotDelay == 0)
                 {
-                    bullets.Add(new Bullet(player_bullet_texture, player.position, new Vector2(0.0f, -10.0f)));
+                    foreach (Bullet_Path bullet_path in bullet_paths)
+                        bullet_path.Shoot(player_bullet_texture);
                     shotDelay = minShotDelay;
                     bulletshot.Play();
                 }
             }
-
             List<Astroid> rain = GenerateRain();
-            List<Bullet> bulletrain = UpdateBullet();
+            foreach (Bullet_Path bullet_path in bullet_paths)
+                bulletrain = UpdateBullet(bullet_path);
 
             if (player.health.amount < 1)
                 Exit();
 
             // COMMIT CHANGES
+            UpdateBullet_Paths();
             astroids = rain;
-            bullets = bulletrain;
+            foreach (Bullet_Path bullet_path in bullet_paths)
+                bullet_path.bullets = bulletrain;
             background.Update(deltaTime / 5);
 
             base.Update(gameTime);
@@ -164,10 +165,9 @@ namespace Game1
             spriteBatch.Begin();
             background.Draw(spriteBatch);
             spriteBatch.Draw(player_texture, player.position, Color.White);
-            player.health.Draw(spriteBatch);
-            for (int i = 0; i < bullets.Count; i++)
+            for (int i = 0; i < bullet_paths.Count; i++)
             {
-                foreach (Bullet bullet in bullets)
+                foreach (Bullet bullet in bullet_paths[i].bullets)
                     bullet.Draw(spriteBatch);
             }
             foreach (Astroid astroid in astroids)
@@ -175,6 +175,7 @@ namespace Game1
             foreach (Powerup powerup in powerups)
                 powerup.Draw(spriteBatch);
             spriteBatch.DrawString(font, "Score: " + player.score, new Vector2(health.position.X, health.position.Y-20.0f), Color.White);
+            player.health.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -284,9 +285,9 @@ namespace Game1
             return currentRain;
         }
 
-        public List<Bullet> UpdateBullet()
+        public List<Bullet> UpdateBullet(Bullet_Path bullet_path)
         {
-            var currentBullet = (from bullet in bullets
+            var currentBullet = (from bullet in bullet_path.bullets
                                  let colliders =
                                  from astroid in astroids
                                  where AstroidBulletCollisionDetection(bullet, astroid)
@@ -302,115 +303,27 @@ namespace Game1
             return currentBullet;
         }
 
-        [Obsolete("Shoot_Powerup() is deprecated, please use generatePowerup() instead", true)]
-        public void Shoot_Powerup(Vector2 position)
+        public void Generate_Powerup(Vector2 position)
         {
             Powerup newPowerup = new Powerup(position, new Vector2(0, 3), powerup_texture);
             powerups.Add(newPowerup);
         }
 
-        [Obsolete("UpdateRain() is deprecated, please use GenerateRain() instead.", true)]
-        public void UpdateRain(List<Astroid> newRain)
-        {
-            if (newRain.Count > 0)
-            {
-                foreach (Astroid astroid in newRain)
-                {
-                    astroid.position += astroid.velocity;
-                    Vector2 pos = astroid.position;
-                    if (pos.Y > windowHeight)
-                    {
-                        toBeRemoved.Add(astroid);
-                    }
-                    else if (AstroidPlayerCollisionDetection(astroid))
-                    {
-                        player.health.amount += -1;
-                        toBeRemoved.Add(astroid);
-                    }
-                }
-                foreach (Astroid remAstroid in toBeRemoved)
-                    astroids.Remove(remAstroid);
-            }
-            for (int i = 0; i < astroids.Count; i++)
-            {
-                if (astroids[i].health < 1)
-                {
-                    toBeRemoved.Add(astroids[i]);
-                    if (random.NextDouble() > 0.9)
-                    {
-                        Shoot_Powerup(astroids[i].position);
-                    }
-                }
-                foreach (Astroid remAstroid in toBeRemoved)
-                    astroids.Remove(remAstroid);
-            }
-        }
-
-        public void UpdateBullets()
-        {
-            for (int i = 0; i < bullet_paths.Count; i++)
-            {
-                if (bullet_paths[i].bullets.Count > 0)
-                {
-                    List<Bullet> toBeRemoved = new List<Bullet>();
-                    foreach (Bullet bullet in bullet_paths[i].bullets)
-                    {
-                        bullet.position += bullet.velocity;
-                        Vector2 pos = bullet.position;
-                        if (pos.Y > windowHeight)
-                            toBeRemoved.Add(bullet);
-                        if (AstroidBulletCollisionDetection(bullet, astroids[0]))
-                        {
-                            toBeRemoved.Add(bullet);
-                        }
-                    }
-                    foreach (Bullet remBullet in toBeRemoved)
-                        bullet_paths[i].bullets.Remove(remBullet);
-                }
-            }
-        }
-
         public void UpdateBullet_Paths()
         {
-            for (int i = 0; i < bullet_paths.Count; i++)
-            {
-                bullet_paths[i].position = player.position;
-            }
+            foreach (Bullet_Path bullet_path in bullet_paths)
+                bullet_path.position = player.position;
         }
 
-        public void UpdatePowerup()
-        {
-            if (powerups.Count > 0)
-            {
-                List<Powerup> toBeRemoved = new List<Powerup>();
-                foreach (Powerup powerup in powerups)
-                {
-                    powerup.position += powerup.velocity;
-                    Vector2 pos = powerup.position;
-                    if (pos.Y > windowHeight)
-                    {
-                        toBeRemoved.Add(powerup);
-                    }
-                    else if (!player.powerup1 && PowerupPlayerCollisionDetection(powerup))
-                    {
-                        toBeRemoved.Add(powerup);
-                        player.powerup1 = true;
-                    }
-                }
-                foreach (Powerup remPowerup in toBeRemoved)
-                    powerups.Remove(remPowerup);
-            }
-        }
-
-        public List<Powerup> generatePowerup()
+        public List<Powerup> UpdatePowerup()
         {
             var currentPowerups = (from powerup in powerups
                                where powerup.position.Y <= windowHeight &&
                                      powerup.position.X <= windowWidth &&
                                      powerup.position.X > -powerup.texture.Width &&
-                                     powerup.position.Y > -powerup.texture.Height
-                               select powerup).ToList<Powerup>();
-
+                                     powerup.position.Y > -powerup.texture.Height &&
+                                     !PowerupPlayerCollisionDetection(powerup)
+                                   select powerup).ToList<Powerup>();
             foreach (var powerup in currentPowerups)
                 powerup.position += powerup.velocity;
             return currentPowerups;
