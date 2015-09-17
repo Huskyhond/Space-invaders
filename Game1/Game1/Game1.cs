@@ -174,28 +174,26 @@ namespace Game1
             base.Draw(gameTime);
         }
 
-        public bool AstroidBulletCollisionDetection(Bullet bullet)
+        public bool AstroidBulletCollisionDetection(Bullet bullet, Astroid astroid)
         {
             float bulletMinY = bullet.position.Y;
             float bulletMaxY = (bullet.position.Y + bullet.texture.Bounds.Height);
 
             float bulletMinX = bullet.position.X;
             float bulletMaxX = (bullet.position.X + bullet.texture.Bounds.Width);
-            for (int i = 0; i < astroids.Count; i++)
+        
+            float astroidMinX = astroid.position.X;
+            float astroidMaxX = (astroid.position.X + astroid.texture.Bounds.Width);
+
+            float astroidMinY = astroid.position.Y;
+            float astroidMaxY = (astroid.position.Y + astroid.texture.Bounds.Height);
+
+            if (astroidMinX < bulletMinX && astroidMaxX > bulletMinX && astroidMinX < bulletMaxX && astroidMaxX > bulletMaxX)
             {
-                float astroidMinX = astroids[i].position.X;
-                float astroidMaxX = (astroids[i].position.X + astroids[i].texture.Bounds.Width);
-
-                float astroidMinY = astroids[i].position.Y;
-                float astroidMaxY = (astroids[i].position.Y + astroids[i].texture.Bounds.Height);
-
-                if (astroidMinX < bulletMinX && astroidMaxX > bulletMinX && astroidMinX < bulletMaxX && astroidMaxX > bulletMaxX)
+                if (astroidMinY < bulletMinY && astroidMaxY > bulletMinY && astroidMinY < bulletMaxY && astroidMaxY > bulletMaxY)
                 {
-                    if (astroidMinY < bulletMinY && astroidMaxY > bulletMinY && astroidMinY < bulletMaxY && astroidMaxY > bulletMaxY)
-                    {
-                        astroids[i].health--;
-                        return true;
-                    }
+                    astroid.health--;
+                    return true;
                 }
             }
             return false;
@@ -262,13 +260,13 @@ namespace Game1
             var currentRain = (from astroid in astroids
                                let colliders = 
                                from bullet in bullets
-                               where AstroidBulletCollisionDetection(bullet)
+                               where AstroidBulletCollisionDetection(bullet, astroid)
                                select bullet
                                where astroid.position.Y <= windowHeight &&
                                      astroid.position.X <= windowWidth &&
                                      astroid.position.X > -astroid.texture.Width &&
                                      astroid.position.Y > -astroid.texture.Height &&
-                                     colliders.Count() == 0
+                                     astroid.health > 0
                                select astroid).ToList<Astroid>();
             foreach (var astroid in currentRain)
                 astroid.position += astroid.velocity;
@@ -280,7 +278,7 @@ namespace Game1
             var currentBullet = (from bullet in bullets
                                  let colliders =
                                  from astroid in astroids
-                                 where AstroidBulletCollisionDetection(bullet)
+                                 where AstroidBulletCollisionDetection(bullet, astroid)
                                  select astroid
                                  where bullet.position.X <= windowHeight &&
                                        bullet.position.X <= windowWidth &&
@@ -350,7 +348,7 @@ namespace Game1
                         Vector2 pos = bullet.position;
                         if (pos.Y > windowHeight)
                             toBeRemoved.Add(bullet);
-                        if (AstroidBulletCollisionDetection(bullet))
+                        if (AstroidBulletCollisionDetection(bullet, astroids[0]))
                         {
                             toBeRemoved.Add(bullet);
                         }
