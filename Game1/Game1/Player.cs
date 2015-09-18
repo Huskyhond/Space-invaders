@@ -15,7 +15,7 @@ namespace Game1
         public Health health { get; set; }
         public Texture2D texture { get; set; }
         public List<Bullet_Path> bullet_path { get; set; }
-        public Boolean powerup1 { get; set; }
+        public int powerupcounter { get; set; }
 
         public int score { get; set; }
 
@@ -25,7 +25,7 @@ namespace Game1
             this.health = health;
             this.texture = texture;
             this.bullet_path = bullet_path;
-            this.powerup1 = false;
+            this.powerupcounter = 0;
         }
 
         public void Draw(SpriteBatch spriteBatch)
