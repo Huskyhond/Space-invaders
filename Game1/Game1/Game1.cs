@@ -45,6 +45,8 @@ namespace Game1
         //settings
         const int minShotDelay = 5; // frames
         int shotDelay = 0;
+        //float scrollspeed;
+
 
         public void AstroidStateChanger()
         {
@@ -129,6 +131,8 @@ namespace Game1
             deltaTime = ((float)gameTime.ElapsedGameTime.TotalMilliseconds - deltaTime);
             if (shotDelay > 0)
                 shotDelay--;
+            if (player.health.amount < 1)
+                Exit();
             player.position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
@@ -146,12 +150,11 @@ namespace Game1
             foreach (Bullet_Path bullet_path in bullet_paths)
                 bulletrain = UpdateBullet(bullet_path);
 
-            if (player.health.amount < 1)
-                Exit();
-
             // COMMIT CHANGES
+            List<Powerup> poweruprain = UpdatePowerup();
             UpdateBullet_Paths();
             astroids = rain;
+            powerups = poweruprain;
             foreach (Bullet_Path bullet_path in bullet_paths)
                 bullet_path.bullets = bulletrain;
             background.Update(deltaTime / 5);
@@ -258,7 +261,17 @@ namespace Game1
             {
                 if (midpowerY > playerMinY && midpowerY < playerMaxY)
                 {
-                    bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -10.0f), new List<Bullet>(), new Vector2(12, 0)));
+                    if (player.powerupcounter == 0)
+                        player.powerupcounter++;
+                    else if (player.powerupcounter == 1)
+                        player.powerupcounter++;
+                    else if (player.powerupcounter == 2)
+                        player.powerupcounter++;
+                    else if (player.powerupcounter == 3)
+                        player.powerupcounter++;
+                    else if (player.powerupcounter == 4)
+                        player.powerupcounter++;
+                    PowerupChecker();
                     return true;
                 }
             }
@@ -279,7 +292,10 @@ namespace Game1
                                      astroid.position.Y > -astroid.texture.Height &&
                                      astroid.health > 0 &&
                                      !AstroidPlayerCollisionDetection(astroid)
-                               select astroid).ToList<Astroid>();
+                               select astroid).ToList();
+            foreach (Astroid astroid in astroids.Except(currentRain))
+                if (true)
+                    Generate_Powerup(astroid.position);
             foreach (var astroid in currentRain)
                 astroid.position += astroid.velocity;
             return currentRain;
@@ -318,15 +334,30 @@ namespace Game1
         public List<Powerup> UpdatePowerup()
         {
             var currentPowerups = (from powerup in powerups
-                               where powerup.position.Y <= windowHeight &&
-                                     powerup.position.X <= windowWidth &&
-                                     powerup.position.X > -powerup.texture.Width &&
-                                     powerup.position.Y > -powerup.texture.Height &&
-                                     !PowerupPlayerCollisionDetection(powerup)
-                                   select powerup).ToList<Powerup>();
+                                   where powerup.position.Y <= windowHeight &&
+                                         powerup.position.X <= windowWidth &&
+                                         powerup.position.X > -powerup.texture.Width &&
+                                         powerup.position.Y > -powerup.texture.Height &&
+                                         !PowerupPlayerCollisionDetection(powerup)
+                                   select powerup).ToList();
             foreach (var powerup in currentPowerups)
                 powerup.position += powerup.velocity;
             return currentPowerups;
+        }
+
+        public void PowerupChecker()
+        {
+            if (player.powerupcounter == 1)
+                bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -5.0f), new List<Bullet>(), new Vector2(12, 0)));
+            if (player.powerupcounter == 2)
+                bullet_paths.Add(new Bullet_Path(player.position, new Vector2(-5.0f, 0.0f), new List<Bullet>(), new Vector2(0, 22)));
+            if (player.powerupcounter == 3)
+                bullet_paths.Add(new Bullet_Path(player.position, new Vector2(5.0f, 0.0f), new List<Bullet>(), new Vector2(30, 22)));
+            if (player.powerupcounter == 4)
+            {
+                bullet_paths.Add(new Bullet_Path(player.position, new Vector2(5.0f, -5.0f), new List<Bullet>(), new Vector2(0, 22)));
+                bullet_paths.Add(new Bullet_Path(player.position, new Vector2(-5.0f, -5.0f), new List<Bullet>(), new Vector2(30, 22)));
+            }
         }
     }
 }
