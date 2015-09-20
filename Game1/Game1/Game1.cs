@@ -3,8 +3,9 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Linq; 
+using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Game1
 {
@@ -22,6 +23,7 @@ namespace Game1
         Health health;
         int windowHeight, windowWidth;
         SoundEffect bulletshot;
+        int astroiddestroyed;
 
         float deltaTime = 0.0f;
 
@@ -56,7 +58,7 @@ namespace Game1
                     vpcstate = 1;
                     line1AmountOfAstroids = random.Next(10, 20);
                     iLine1 = 0;
-                    astroidWaitLine3 = (float)random.Next(5000, 7000);
+                    astroidWaitLine3 = (float)random.Next(500, 1000);
                     astroidWaitLine2 = 0;
                     break;
                 case 1:
@@ -70,7 +72,7 @@ namespace Game1
                     if (astroidWaitLine2 <= 0)
                     {
                         Astroid astroid = new Astroid(enemy_astroid);
-                        astroids.Add(new Astroid(enemy_astroid, new Vector2((float)random.Next(windowWidth), 0.0f), new Vector2(0.0f, 1.0f)));
+                        astroids.Add(new Astroid(enemy_astroid, new Vector2((float)random.Next(windowWidth), 0.0f), new Vector2((float)random.NextDouble() * 2 -1, (float)random.NextDouble() *2 + 2)));
                         iLine1++;
                         vpcstate = 1;
                         astroidWaitLine2 = (float)(random.NextDouble() * 0.2 + 50);
@@ -100,9 +102,10 @@ namespace Game1
             windowHeight = b.Height;
             health = new Health(healthbar);
             player = new Player(player_texture, health, bullet_paths);
-            player.health.position = new Vector2(600, 450);
-            bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -5.0f), new List<Bullet>(), new Vector2(0, 0)));
-            bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -5.0f), new List<Bullet>(), new Vector2(25, 0)));
+            player.health.position = new Vector2((windowWidth * 80 /100), (windowHeight * 95 / 100));
+            initialBullet_Path();
+            //graphics.IsFullScreen = true;
+            //graphics.ApplyChanges();
         }
 
         protected override void LoadContent()
@@ -132,7 +135,9 @@ namespace Game1
             if (shotDelay > 0)
                 shotDelay--;
             if (player.health.amount < 1)
-                Exit();
+                {
+                    Exit();
+                }
             player.position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
@@ -278,6 +283,12 @@ namespace Game1
             return false;
         }
 
+        public void initialBullet_Path()
+        {
+            bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -5.0f), new List<Bullet>(), new Vector2(0, 0)));
+            bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -5.0f), new List<Bullet>(), new Vector2(25, 0)));
+        }
+
         public List<Astroid> GenerateRain()
         {
             AstroidStateChanger();
@@ -294,8 +305,14 @@ namespace Game1
                                      !AstroidPlayerCollisionDetection(astroid)
                                select astroid).ToList();
             foreach (Astroid astroid in astroids.Except(currentRain))
-                if (true)
-                    Generate_Powerup(astroid.position);
+            {
+                astroiddestroyed++;
+                if (random.NextDouble() > 0.9)
+                {
+                    Powerup newPowerup = Generate_Powerup(astroid.position);
+                    powerups.Add(newPowerup);
+                }
+            }
             foreach (var astroid in currentRain)
                 astroid.position += astroid.velocity;
             return currentRain;
@@ -319,10 +336,10 @@ namespace Game1
             return currentBullet;
         }
 
-        public void Generate_Powerup(Vector2 position)
+        public Powerup Generate_Powerup(Vector2 position)
         {
             Powerup newPowerup = new Powerup(position, new Vector2(0, 3), powerup_texture);
-            powerups.Add(newPowerup);
+            return newPowerup;
         }
 
         public void UpdateBullet_Paths()
