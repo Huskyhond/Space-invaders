@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Game1.GameControllers;
 
 namespace Game1
 {
@@ -49,6 +50,7 @@ namespace Game1
         int shotDelay = 0;
         //float scrollspeed;
 
+        GameController controller = new CombineController(new MouseController(), new KeyboardController());
 
         public void AstroidStateChanger()
         {
@@ -103,6 +105,7 @@ namespace Game1
             health = new Health(healthbar);
             player = new Player(player_texture, health, bullet_paths);
             player.health.position = new Vector2((windowWidth * 80 /100), (windowHeight * 95 / 100));
+            player.position = new Vector2((float)windowWidth / 2, (float)(windowHeight * 0.80));
             initialBullet_Path();
             //graphics.IsFullScreen = true;
             //graphics.ApplyChanges();
@@ -138,10 +141,9 @@ namespace Game1
                 {
                     Exit();
                 }
-            player.position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
+            if (controller.shooting())
             {
                 if (shotDelay == 0)
                 {
@@ -164,6 +166,7 @@ namespace Game1
                 bullet_path.bullets = bulletrain;
             background.Update(deltaTime / 5);
 
+            controller.update(deltaTime, player);
             base.Update(gameTime);
         }
 

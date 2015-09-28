@@ -18,6 +18,9 @@ namespace Game1
         public List<Bullet_Path> bullet_path { get; set; }
         public int powerupcounter { get; set; }
 
+        public int velocityX { get; set; }
+        public int velocityY { get; set; }    
+
         public int score { get; set; }
 
         public Player(Texture2D texture, Health health, List<Bullet_Path> bullet_path)
@@ -28,6 +31,8 @@ namespace Game1
             this.bullet_path = bullet_path;
             this.powerupcounter = 0;
             this.lives = 3;
+            this.velocityX = 3;
+            this.velocityY = 3;
         }
 
         public void Draw(SpriteBatch spriteBatch)
