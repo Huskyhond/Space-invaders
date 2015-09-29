@@ -18,7 +18,7 @@ namespace Game1
         Random random = new Random();
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Texture2D background_stars, healthbar;
+        Texture2D background_stars;
         SpriteFont font;
         Player player;
         int windowHeight, windowWidth;
