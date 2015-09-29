@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Game1.GameControllers;
 
 namespace Game1
 {
@@ -16,7 +17,8 @@ namespace Game1
         public Health health { get; set; }
         public Texture2D texture { get; set; }
         public List<Bullet_Path> bullet_path { get; set; }
-        public int powerupcounter { get; set; } 
+        public int powerupcounter { get; set; }
+        public GameController controller { get; set; }
 
         public int score { get; set; }
 

@@ -19,7 +19,6 @@ namespace Game1.GameControllers
 
         public bool shooting()
         {
-            GamePad.SetVibration(0, 1.0f, 1.0f);
             return GamePad.GetState(0).IsButtonDown(Buttons.RightTrigger);
         }
 

@@ -21,7 +21,6 @@ namespace Game1
         Texture2D background_stars, healthbar;
         SpriteFont font;
         Player player;
-        Health health;
         int windowHeight, windowWidth;
         SoundEffect bulletshot;
         int astroiddestroyed;
@@ -29,7 +28,7 @@ namespace Game1
         float deltaTime = 0.0f;
 
         //Lists
-        List<Astroid> astroids = new List<Astroid>();
+        List<Astroid> astroids  = new List<Astroid>();
         List<Bullet_Path> bullet_paths = new List<Bullet_Path>();
         List<Bullet> bullets = new List<Bullet>();
         List<Powerup> powerups = new List<Powerup>();
@@ -49,8 +48,6 @@ namespace Game1
         const int minShotDelay = 5; // frames
         int shotDelay = 0;
         //float scrollspeed;
-
-        GameController controller = new CombineController(new GamePadController(), new KeyboardController());
 
         public void AstroidStateChanger()
         {
@@ -102,10 +99,11 @@ namespace Game1
             Rectangle b = GraphicsDevice.Viewport.Bounds;
             windowWidth = b.Width;
             windowHeight = b.Height;
-            health = new Health(healthbar);
+            Health health = new Health(Content.Load<Texture2D>("healthBar.png"));
             player = new Player(Content.Load<Texture2D>("Fighter_small.png"), health, bullet_paths);
             player.health.position = new Vector2((windowWidth * 80 /100), (windowHeight * 95 / 100));
             player.position = new Vector2((float)windowWidth / 2, (float)(windowHeight * 0.80));
+            player.controller = new CombineController(new GamePadController(), new KeyboardController());
             initialBullet_Path();
             //graphics.IsFullScreen = true;
             //graphics.ApplyChanges();
@@ -116,7 +114,6 @@ namespace Game1
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             background_stars = Content.Load<Texture2D>("background_stars.png");
-            healthbar = Content.Load<Texture2D>("healthBar.png");
             background.Load(GraphicsDevice, background_stars);
             bulletshot = Content.Load<SoundEffect>("player_shoot");
             font = Content.Load<SpriteFont>("GameFont");
@@ -137,9 +134,9 @@ namespace Game1
                 {
                     Exit();
                 }
-            if (controller.exit())
+            if (player.controller.exit())
                 Exit();
-            if (controller.shooting())
+            if (player.controller.shooting())
             {
                 if (shotDelay == 0)
                 {
@@ -162,7 +159,7 @@ namespace Game1
                 bullet_path.bullets = bulletrain;
             background.Update(deltaTime / 5);
 
-            controller.update(deltaTime, player);
+            player.controller.update(deltaTime, player);
             base.Update(gameTime);
         }
 
@@ -181,7 +178,7 @@ namespace Game1
                 astroid.Draw(spriteBatch);
             foreach (Powerup powerup in powerups)
                 powerup.Draw(spriteBatch);
-            spriteBatch.DrawString(font, "Score: " + player.score, new Vector2(health.position.X, health.position.Y-20.0f), Color.White);
+            spriteBatch.DrawString(font, "Score: " + player.score, new Vector2(player.health.position.X, player.health.position.Y-20.0f), Color.White);
             player.health.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);

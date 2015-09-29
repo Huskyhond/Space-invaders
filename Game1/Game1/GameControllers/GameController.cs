@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace Game1.GameControllers
 {
-    interface GameController
+    public interface GameController
     {
         void update(float DeltaTime, Player player);
         bool shooting();

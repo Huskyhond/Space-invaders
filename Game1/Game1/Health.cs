@@ -7,16 +7,18 @@ using System.Text;
 
 namespace Game1
 {
-    public class Health
+    public class Health : Entity
     {
         public Texture2D texture { get; set; }
         public Vector2 position { get; set; }
+        public Vector2 velocity { get; set; }
         public int amount { get; set; }
 
         public Health(Texture2D texture, int health = 3)
         {
             this.texture = texture;
             this.amount = health;
+            this.velocity = new Vector2(0.0f, 0.0f);
         }
 
         public void Draw(SpriteBatch spritebatch)
