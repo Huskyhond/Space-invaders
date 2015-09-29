@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Game1
 {
-    public class Astroid
+    public class Astroid : Entity
     {
        public Vector2 position { get; set; }
        public Vector2 origin { get; set; }

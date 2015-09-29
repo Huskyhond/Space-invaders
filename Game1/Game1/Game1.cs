@@ -18,7 +18,7 @@ namespace Game1
         Random random = new Random();
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Texture2D player_texture, background_stars, player_bullet_texture, enemy_astroid, healthbar, powerup_texture;
+        Texture2D background_stars, healthbar;
         SpriteFont font;
         Player player;
         Health health;
@@ -50,7 +50,7 @@ namespace Game1
         int shotDelay = 0;
         //float scrollspeed;
 
-        GameController controller = new CombineController(new MouseController(), new KeyboardController());
+        GameController controller = new CombineController(new GamePadController(), new KeyboardController());
 
         public void AstroidStateChanger()
         {
@@ -73,8 +73,8 @@ namespace Game1
                     astroidWaitLine2 -= deltaTime;
                     if (astroidWaitLine2 <= 0)
                     {
-                        Astroid astroid = new Astroid(enemy_astroid);
-                        astroids.Add(new Astroid(enemy_astroid, new Vector2((float)random.Next(windowWidth), 0.0f), new Vector2((float)random.NextDouble() * 2 -1, (float)random.NextDouble() *2 + 2)));
+                        Astroid astroid = new Astroid(Content.Load<Texture2D>("asteroid.png"));
+                        astroids.Add(new Astroid(Content.Load<Texture2D>("asteroid.png"), new Vector2((float)random.Next(windowWidth), 0.0f), new Vector2((float)random.NextDouble() * 2 - 1, (float)random.NextDouble() * 2 + 2)));
                         iLine1++;
                         vpcstate = 1;
                         astroidWaitLine2 = (float)(random.NextDouble() * 0.2 + 50);
@@ -103,7 +103,7 @@ namespace Game1
             windowWidth = b.Width;
             windowHeight = b.Height;
             health = new Health(healthbar);
-            player = new Player(player_texture, health, bullet_paths);
+            player = new Player(Content.Load<Texture2D>("Fighter_small.png"), health, bullet_paths);
             player.health.position = new Vector2((windowWidth * 80 /100), (windowHeight * 95 / 100));
             player.position = new Vector2((float)windowWidth / 2, (float)(windowHeight * 0.80));
             initialBullet_Path();
@@ -115,12 +115,8 @@ namespace Game1
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            player_texture = Content.Load<Texture2D>("Fighter_small.png");
             background_stars = Content.Load<Texture2D>("background_stars.png");
-            player_bullet_texture = Content.Load<Texture2D>("player_bullet_left.png");
-            enemy_astroid = Content.Load<Texture2D>("asteroid.png");
             healthbar = Content.Load<Texture2D>("healthBar.png");
-            powerup_texture = Content.Load<Texture2D>("powerup1.png");
             background.Load(GraphicsDevice, background_stars);
             bulletshot = Content.Load<SoundEffect>("player_shoot");
             font = Content.Load<SpriteFont>("GameFont");
@@ -141,14 +137,14 @@ namespace Game1
                 {
                     Exit();
                 }
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (controller.exit())
                 Exit();
             if (controller.shooting())
             {
                 if (shotDelay == 0)
                 {
                     foreach (Bullet_Path bullet_path in bullet_paths)
-                        bullet_path.Shoot(player_bullet_texture);
+                        bullet_path.Shoot(Content.Load<Texture2D>("player_bullet_left.png"));
                     shotDelay = minShotDelay;
                     bulletshot.Play();
                 }
@@ -175,7 +171,7 @@ namespace Game1
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
             background.Draw(spriteBatch);
-            spriteBatch.Draw(player_texture, player.position, Color.White);
+            spriteBatch.Draw(player.texture, player.position, Color.White);
             for (int i = 0; i < bullet_paths.Count; i++)
             {
                 foreach (Bullet bullet in bullet_paths[i].bullets)
@@ -222,10 +218,10 @@ namespace Game1
         public bool AstroidPlayerCollisionDetection(Astroid astroid)
         {
             float playerMinX = player.position.X;
-            float playerMaxX = (player.position.X + player_texture.Bounds.Width);
+            float playerMaxX = (player.position.X + player.texture.Bounds.Width);
 
             float playerMinY = player.position.Y;
-            float playerMaxY = (player.position.Y + player_texture.Bounds.Height);
+            float playerMaxY = (player.position.Y + player.texture.Bounds.Height);
 
             float astroidMinX = astroid.position.X;
             float astroidMaxX = (astroid.position.X + astroid.texture.Bounds.Width);
@@ -251,10 +247,10 @@ namespace Game1
         public bool PowerupPlayerCollisionDetection(Powerup powerup)
         {
             float playerMinX = player.position.X;
-            float playerMaxX = (player.position.X + player_texture.Bounds.Width);
+            float playerMaxX = (player.position.X + player.texture.Bounds.Width);
 
             float playerMinY = player.position.Y;
-            float playerMaxY = (player.position.Y + player_texture.Bounds.Height);
+            float playerMaxY = (player.position.Y + player.texture.Bounds.Height);
 
             float powerupMinY = powerup.position.Y;
             float powerupMaxY = (powerup.position.Y + powerup.texture.Bounds.Height);
@@ -341,7 +337,7 @@ namespace Game1
 
         public Powerup Generate_Powerup(Vector2 position)
         {
-            Powerup newPowerup = new Powerup(position, new Vector2(0, 3), powerup_texture);
+            Powerup newPowerup = new Powerup(position, new Vector2(0, 3), Content.Load<Texture2D>("powerup1.png"));
             return newPowerup;
         }
 

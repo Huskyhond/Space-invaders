@@ -17,7 +17,11 @@ namespace Game1.GameControllers
         public void update(float DeltaTime, Player player)
         {
             player.position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+        }
 
+        public bool exit()
+        {
+            return false;
         }
     }
 }

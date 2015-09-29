@@ -153,3 +153,4 @@ C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1
 C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\SharpDX.XInput.xml
 C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\SharpDX.RawInput.xml
 C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\SharpDX.Direct3D9.xml
+C:\Users\NiekE\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\player_shoot.xnb

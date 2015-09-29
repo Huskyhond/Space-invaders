@@ -41,8 +41,10 @@
     <Compile Include="Astroid.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="Bullet_Path.cs" />
+    <Compile Include="Entity.cs" />
     <Compile Include="GameControllers\CombineController.cs" />
-    <Compile Include="GameController.cs" />
+    <Compile Include="GameControllers\GameController.cs" />
+    <Compile Include="GameControllers\GamePadController.cs" />
     <Compile Include="GameControllers\MouseController.cs" />
     <Compile Include="Health.cs" />
     <Compile Include="Game1.cs" />

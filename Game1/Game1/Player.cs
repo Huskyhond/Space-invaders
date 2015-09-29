@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Game1
 {
-    public class Player
+    public class Player : Entity
     {
         public Vector2 position { get; set; }
         public Vector2 origin { get; set; }
@@ -16,10 +16,7 @@ namespace Game1
         public Health health { get; set; }
         public Texture2D texture { get; set; }
         public List<Bullet_Path> bullet_path { get; set; }
-        public int powerupcounter { get; set; }
-
-        public int velocityX { get; set; }
-        public int velocityY { get; set; }    
+        public int powerupcounter { get; set; } 
 
         public int score { get; set; }
 
@@ -31,8 +28,7 @@ namespace Game1
             this.bullet_path = bullet_path;
             this.powerupcounter = 0;
             this.lives = 3;
-            this.velocityX = 3;
-            this.velocityY = 3;
+            this.velocity = new Vector2(6.0f, 6.0f);
         }
 
         public void Draw(SpriteBatch spriteBatch)

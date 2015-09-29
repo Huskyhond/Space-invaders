@@ -25,5 +25,10 @@ namespace Game1.GameControllers
             controller1.update(DeltaTime, player);
             controller2.update(DeltaTime, player);
         }
+
+        public bool exit()
+        {
+            return controller1.exit() || controller2.exit();
+        }
     }
 }

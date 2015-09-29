@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Game1
 {
-    public class Bullet
+    public class Bullet : Entity
     {
         public Texture2D texture { get; set; }
         public Vector2 position { get ; set; }
