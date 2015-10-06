@@ -24,6 +24,7 @@ namespace Game1
         int windowHeight, windowWidth;
         SoundEffect bulletshot;
         int astroiddestroyed;
+        Weapon<Entity> weapon;
 
         float deltaTime = 0.0f;
 
@@ -103,10 +104,9 @@ namespace Game1
             player = new Player(Content.Load<Texture2D>("Fighter_small.png"), health, bullet_paths);
             player.health.position = new Vector2((windowWidth * 80 /100), (windowHeight * 95 / 100));
             player.position = new Vector2((float)windowWidth / 2, (float)(windowHeight * 0.80));
-            player.controller = new CombineController(new GamePadController(), new KeyboardController());
-            initialBullet_Path();
-            //graphics.IsFullScreen = true;
-            //graphics.ApplyChanges();
+            player.controller = new CombineController(new MouseController(), new KeyboardController());
+            weapon = new BlasterOne(Content, player.position);
+            initialBullet_Path(); 
         }
 
         protected override void LoadContent()
@@ -115,7 +115,6 @@ namespace Game1
             spriteBatch = new SpriteBatch(GraphicsDevice);
             background_stars = Content.Load<Texture2D>("background_stars.png");
             background.Load(GraphicsDevice, background_stars);
-            bulletshot = Content.Load<SoundEffect>("player_shoot");
             font = Content.Load<SpriteFont>("GameFont");
             // TODO: use this.Content to load your game content here
         }
@@ -138,13 +137,7 @@ namespace Game1
                 Exit();
             if (player.controller.shooting())
             {
-                if (shotDelay == 0)
-                {
-                    foreach (Bullet_Path bullet_path in bullet_paths)
-                        bullet_path.Shoot(Content.Load<Texture2D>("player_bullet_left.png"));
-                    shotDelay = minShotDelay;
-                    bulletshot.Play();
-                }
+                weapon.PullTrigger();
             }
             List<Astroid> rain = GenerateRain();
             foreach (Bullet_Path bullet_path in bullet_paths)
@@ -160,6 +153,7 @@ namespace Game1
             background.Update(deltaTime / 5);
 
             player.controller.update(deltaTime, player);
+            weapon.Update(deltaTime, player.position);
             base.Update(gameTime);
         }
 
@@ -169,11 +163,8 @@ namespace Game1
             spriteBatch.Begin();
             background.Draw(spriteBatch);
             spriteBatch.Draw(player.texture, player.position, Color.White);
-            for (int i = 0; i < bullet_paths.Count; i++)
-            {
-                foreach (Bullet bullet in bullet_paths[i].bullets)
+                foreach (Bullet bullet in )
                     bullet.Draw(spriteBatch);
-            }
             foreach (Astroid astroid in astroids)
                 astroid.Draw(spriteBatch);
             foreach (Powerup powerup in powerups)
