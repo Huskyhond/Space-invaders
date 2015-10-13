@@ -130,15 +130,11 @@ namespace Game1
             if (shotDelay > 0)
                 shotDelay--;
             if (player.health.amount < 1)
-                {
                     Exit();
-                }
             if (player.controller.exit())
                 Exit();
             if (player.controller.shooting())
-            {
                 weapon.PullTrigger();
-            }
             List<Astroid> rain = GenerateRain();
 
             // COMMIT CHANGES
