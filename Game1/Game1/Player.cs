@@ -16,18 +16,16 @@ namespace Game1
         public int lives { get; set; }
         public Health health { get; set; }
         public Texture2D texture { get; set; }
-        public List<Bullet_Path> bullet_path { get; set; }
         public int powerupcounter { get; set; }
         public GameController controller { get; set; }
 
         public int score { get; set; }
 
-        public Player(Texture2D texture, Health health, List<Bullet_Path> bullet_path)
+        public Player(Texture2D texture, Health health)
         {
             ////this.score = 0;
             this.health = health;
             this.texture = texture;
-            this.bullet_path = bullet_path;
             this.powerupcounter = 0;
             this.lives = 3;
             this.velocity = new Vector2(6.0f, 6.0f);

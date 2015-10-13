@@ -44,7 +44,6 @@
     <Compile Include="Weapons\SingleBlaster.cs" />
     <Compile Include="Weapons\GenericBlaster.cs" />
     <Compile Include="Bullet.cs" />
-    <Compile Include="Bullet_Path.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="GameControllers\CombineController.cs" />
     <Compile Include="GameControllers\GameController.cs" />

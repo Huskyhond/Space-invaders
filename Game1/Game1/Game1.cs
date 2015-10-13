@@ -30,7 +30,6 @@ namespace Game1
 
         //Lists
         List<Astroid> astroids  = new List<Astroid>();
-        List<Bullet_Path> bullet_paths = new List<Bullet_Path>();
         List<Bullet> bullets = new List<Bullet>();
         List<Powerup> powerups = new List<Powerup>();
         List<Astroid> toBeRemoved = new List<Astroid>();
@@ -101,14 +100,13 @@ namespace Game1
             windowWidth = b.Width;
             windowHeight = b.Height;
             Health health = new Health(Content.Load<Texture2D>("healthBar.png"));
-            player = new Player(Content.Load<Texture2D>("Fighter_small.png"), health, bullet_paths);
+            player = new Player(Content.Load<Texture2D>("Fighter_small.png"), health);
             player.health.position = new Vector2((windowWidth * 80 /100), (windowHeight * 95 / 100));
             player.position = new Vector2((float)windowWidth / 2, (float)(windowHeight * 0.80));
             player.controller = new CombineController(new MouseController(), new KeyboardController());
             Content.Load<SoundEffect>("player_shoot");
             Content.Load<Texture2D>("player_bullet_left");
             weapon = new SingleBlaster(Content, player.position);
-            initialBullet_Path(); 
         }
 
         protected override void LoadContent()
@@ -272,12 +270,7 @@ namespace Game1
             return false;
         }
 
-        public void initialBullet_Path()
-        {
-            bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -5.0f), new List<Bullet>(), new Vector2(0, 0)));
-            bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -5.0f), new List<Bullet>(), new Vector2(25, 0)));
-        }
-
+        
         public List<Astroid> GenerateRain()
         {
             AstroidStateChanger();
@@ -329,12 +322,6 @@ namespace Game1
         {
             Powerup newPowerup = new Powerup(position, new Vector2(0, 3), Content.Load<Texture2D>("powerup1.png"));
             return newPowerup;
-        }
-
-        public void UpdateBullet_Paths()
-        {
-            foreach (Bullet_Path bullet_path in bullet_paths)
-                bullet_path.position = player.position;
         }
 
         public List<Powerup> UpdatePowerup()
