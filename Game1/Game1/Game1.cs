@@ -22,7 +22,6 @@ namespace Game1
         SpriteFont font;
         Player player;
         int windowHeight, windowWidth;
-        SoundEffect bulletshot;
         int astroiddestroyed;
         Weapon<Bullet> weapon;
 

@@ -39,6 +39,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Astroid.cs" />
+    <Compile Include="Scripts\Instruction.cs" />
+    <Compile Include="Scripts\Wait.cs" />
     <Compile Include="Weapons\TripleBlaster.cs" />
     <Compile Include="Weapons\DoubleBlaster.cs" />
     <Compile Include="Weapons\SingleBlaster.cs" />
