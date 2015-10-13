@@ -24,7 +24,7 @@ namespace Game1
         int windowHeight, windowWidth;
         SoundEffect bulletshot;
         int astroiddestroyed;
-        Weapon<Entity> weapon;
+        Weapon<Bullet> weapon;
 
         float deltaTime = 0.0f;
 
@@ -105,7 +105,9 @@ namespace Game1
             player.health.position = new Vector2((windowWidth * 80 /100), (windowHeight * 95 / 100));
             player.position = new Vector2((float)windowWidth / 2, (float)(windowHeight * 0.80));
             player.controller = new CombineController(new MouseController(), new KeyboardController());
-            weapon = new BlasterOne(Content, player.position);
+            Content.Load<SoundEffect>("player_shoot");
+            Content.Load<Texture2D>("player_bullet_left");
+            weapon = new SingleBlaster(Content, player.position);
             initialBullet_Path(); 
         }
 
@@ -140,19 +142,19 @@ namespace Game1
                 weapon.PullTrigger();
             }
             List<Astroid> rain = GenerateRain();
-            foreach (Bullet_Path bullet_path in bullet_paths)
-                bulletrain = UpdateBullet(bullet_path);
 
             // COMMIT CHANGES
             List<Powerup> poweruprain = UpdatePowerup();
-            UpdateBullet_Paths();
+
             astroids = rain;
             powerups = poweruprain;
-            foreach (Bullet_Path bullet_path in bullet_paths)
-                bullet_path.bullets = bulletrain;
+   
             background.Update(deltaTime / 5);
 
+            bullets = UpdateBullets(bullets);
+
             player.controller.update(deltaTime, player);
+            bullets.AddRange(weapon.newBullets);
             weapon.Update(deltaTime, player.position);
             base.Update(gameTime);
         }
@@ -163,8 +165,8 @@ namespace Game1
             spriteBatch.Begin();
             background.Draw(spriteBatch);
             spriteBatch.Draw(player.texture, player.position, Color.White);
-                foreach (Bullet bullet in )
-                    bullet.Draw(spriteBatch);
+            foreach (Bullet bullet in bullets)
+                bullet.Draw(spriteBatch);
             foreach (Astroid astroid in astroids)
                 astroid.Draw(spriteBatch);
             foreach (Powerup powerup in powerups)
@@ -305,9 +307,9 @@ namespace Game1
             return currentRain;
         }
 
-        public List<Bullet> UpdateBullet(Bullet_Path bullet_path)
+        public List<Bullet> UpdateBullets(List<Bullet> bullets)
         {
-            var currentBullet = (from bullet in bullet_path.bullets
+            var currentBullet = (from bullet in bullets
                                  let colliders =
                                  from astroid in astroids
                                  where AstroidBulletCollisionDetection(bullet, astroid)
@@ -351,16 +353,16 @@ namespace Game1
 
         public void PowerupChecker()
         {
-            if (player.powerupcounter == 1)
-                bullet_paths.Add(new Bullet_Path(player.position, new Vector2(0, -5.0f), new List<Bullet>(), new Vector2(12, 0)));
-            if (player.powerupcounter == 2)
-                bullet_paths.Add(new Bullet_Path(player.position, new Vector2(-5.0f, 0.0f), new List<Bullet>(), new Vector2(0, 22)));
-            if (player.powerupcounter == 3)
-                bullet_paths.Add(new Bullet_Path(player.position, new Vector2(5.0f, 0.0f), new List<Bullet>(), new Vector2(30, 22)));
-            if (player.powerupcounter == 4)
+            if (player.powerupcounter <= 2)
             {
-                bullet_paths.Add(new Bullet_Path(player.position, new Vector2(5.0f, -5.0f), new List<Bullet>(), new Vector2(0, 22)));
-                bullet_paths.Add(new Bullet_Path(player.position, new Vector2(-5.0f, -5.0f), new List<Bullet>(), new Vector2(30, 22)));
+                switch(player.powerupcounter) {
+                    case 1:
+                        weapon = new DoubleBlaster(Content, player.position);
+                    break;
+                    case 2:
+                        weapon = new TripleBlaster(Content, player.position);
+                    break;
+                }
             }
         }
     }

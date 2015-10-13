@@ -39,8 +39,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Astroid.cs" />
-    <Compile Include="BlasterOne.cs" />
-    <Compile Include="GenericBlaster.cs" />
+    <Compile Include="Weapons\TripleBlaster.cs" />
+    <Compile Include="Weapons\DoubleBlaster.cs" />
+    <Compile Include="Weapons\SingleBlaster.cs" />
+    <Compile Include="Weapons\GenericBlaster.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="Bullet_Path.cs" />
     <Compile Include="Entity.cs" />
@@ -56,7 +58,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScrollingBackground.cs" />
-    <Compile Include="Weapon.cs" />
+    <Compile Include="Weapons\Weapon.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

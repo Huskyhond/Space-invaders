@@ -8,13 +8,13 @@ using System.Text;
 
 namespace Game1
 {
-    class BlasterOne : GenericBlaster
+    class SingleBlaster : GenericBlaster
     {
-        public BlasterOne(ContentManager content, Vector2 shipPos) : base(content, shipPos) { }
+        public SingleBlaster(ContentManager content, Vector2 shipPos) : base(content, shipPos) { }
 
         protected override void Addshots()
         {
-            currentBullets.Add(new Bullet(Content.Load<Texture2D>("player_bullet_left")));
+            currentBullets.Add(new Bullet(Content.Load<Texture2D>("player_bullet_left"), shipPosition));
         }
     }
 }

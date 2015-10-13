@@ -9,9 +9,9 @@ using System.Text;
 
 namespace Game1
 {
-    abstract class GenericBlaster : Weapon<Entity>
+    abstract class GenericBlaster : Weapon<Bullet>
     {
-        protected List<Entity> currentBullets = new List<Entity>();
+        protected List<Bullet> currentBullets = new List<Bullet>();
         protected ContentManager Content;
         protected SoundEffect bulletshot;
         protected Vector2 shipPosition;
@@ -24,7 +24,7 @@ namespace Game1
             this.shipPosition = shipPos;
         }
 
-        public List<Entity> newBullets
+        public List<Bullet> newBullets
         {
             get
             {
@@ -50,7 +50,7 @@ namespace Game1
             if (shotDelay > 0)
                 shotDelay--;
             this.shipPosition = shipPos;
-            currentBullets = new List<Entity>();
+            currentBullets = new List<Bullet>();
         }
     }
 }
