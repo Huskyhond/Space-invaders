@@ -7,6 +7,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Game1.GameControllers;
+using Game1.Scripts;
 
 namespace Game1
 {
@@ -26,6 +27,20 @@ namespace Game1
         Weapon<Bullet> weapon;
 
         float deltaTime = 0.0f;
+
+        Instruction astroidRain =
+            new While(
+                new Semicolon(new Wait(1000),
+                    new Semicolon(
+                        new For(0, 10,
+                            new Semicolon(
+                                new CreateAstroid(),
+                                new Wait(500)
+                            )
+                        ), new Wait(500)
+                    )
+                )
+           );
 
         //Lists
         List<Astroid> astroids  = new List<Astroid>();
@@ -47,43 +62,6 @@ namespace Game1
         const int minShotDelay = 5; // frames
         int shotDelay = 0;
         //float scrollspeed;
-
-        public void AstroidStateChanger()
-        {
-            switch (vpcstate)
-            {
-                case 0:
-                    vpcstate = 1;
-                    line1AmountOfAstroids = random.Next(10, 20);
-                    iLine1 = 0;
-                    astroidWaitLine3 = (float)random.Next(500, 1000);
-                    astroidWaitLine2 = 0;
-                    break;
-                case 1:
-                    if(line1AmountOfAstroids > iLine1)
-                        vpcstate = 2;
-                    else
-                        vpcstate = 3;
-                    break;
-                case 2:
-                    astroidWaitLine2 -= deltaTime;
-                    if (astroidWaitLine2 <= 0)
-                    {
-                        Astroid astroid = new Astroid(Content.Load<Texture2D>("asteroid.png"));
-                        astroids.Add(new Astroid(Content.Load<Texture2D>("asteroid.png"), new Vector2((float)random.Next(windowWidth), 0.0f), new Vector2((float)random.NextDouble() * 2 - 1, (float)random.NextDouble() * 2 + 2)));
-                        iLine1++;
-                        vpcstate = 1;
-                        astroidWaitLine2 = (float)(random.NextDouble() * 0.2 + 50);
-                    }
-                    break;
-                case 3:
-                    astroidWaitLine3 -= deltaTime;
-                    if (astroidWaitLine3 <= 0)
-                        vpcstate = 0;
-                    break;
-
-            }
-        }
 
         public Game1()
         {
@@ -115,6 +93,7 @@ namespace Game1
             background_stars = Content.Load<Texture2D>("background_stars.png");
             background.Load(GraphicsDevice, background_stars);
             font = Content.Load<SpriteFont>("GameFont");
+            Content.Load<Texture2D>("asteroid.png");
             // TODO: use this.Content to load your game content here
         }
 
@@ -134,12 +113,29 @@ namespace Game1
                 Exit();
             if (player.controller.shooting())
                 weapon.PullTrigger();
+
+            switch (astroidRain.Execute(deltaTime))
+            {
+                case InstructionResult.Running:
+                    break;
+                case InstructionResult.Done:
+                    break;
+                case InstructionResult.RunningAndCreateAstroid:
+                case InstructionResult.DoneAndCreateAstroid:
+                    astroids.Add(new Astroid(Content.Load<Texture2D>("asteroid.png"), new Vector2((float)random.Next(windowWidth), 0.0f), new Vector2((float)random.NextDouble() * 2 - 1, (float)random.NextDouble() * 2 + 2), 5));
+                    break;
+                default:
+                    break;
+            }
+
             List<Astroid> rain = GenerateRain();
 
             // COMMIT CHANGES
+ 
             List<Powerup> poweruprain = UpdatePowerup();
 
             astroids = rain;
+
             powerups = poweruprain;
    
             background.Update(deltaTime / 5);
@@ -268,7 +264,7 @@ namespace Game1
         
         public List<Astroid> GenerateRain()
         {
-            AstroidStateChanger();
+            //AstroidStateChanger();
             var currentRain = (from astroid in astroids
                                let colliders = 
                                from bullet in bullets

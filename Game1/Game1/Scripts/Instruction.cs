@@ -5,15 +5,16 @@ using System.Text;
 
 namespace Game1.Scripts
 {
-    enum InstructionResult {
+    public enum InstructionResult {
         Running,
         Done,
         RunningAndCreateAstroid,
         DoneAndCreateAstroid
     }
-    abstract class Instruction
+
+    public abstract class Instruction
     {
         public abstract InstructionResult Execute(float deltaTime);
-        public abstract void Reset();
+        public abstract Instruction Reset();
     }
 }

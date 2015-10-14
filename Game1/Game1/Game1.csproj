@@ -39,8 +39,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Astroid.cs" />
+    <Compile Include="Scripts\CreateAstroid.cs" />
+    <Compile Include="Scripts\For.cs" />
     <Compile Include="Scripts\Instruction.cs" />
+    <Compile Include="Scripts\Semicolon.cs" />
     <Compile Include="Scripts\Wait.cs" />
+    <Compile Include="Scripts\While.cs" />
     <Compile Include="Weapons\TripleBlaster.cs" />
     <Compile Include="Weapons\DoubleBlaster.cs" />
     <Compile Include="Weapons\SingleBlaster.cs" />

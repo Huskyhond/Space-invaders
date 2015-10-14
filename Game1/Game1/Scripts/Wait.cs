@@ -23,9 +23,9 @@ namespace Game1.Scripts
                 return InstructionResult.Running;
         }
 
-        public override void Reset()
+        public override Instruction Reset()
         {
-            waitTime = initialTime;   
+            return new Wait(initialTime);
         }
     }
 }
