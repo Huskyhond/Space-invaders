@@ -19,7 +19,6 @@ namespace Game1
         Random random = new Random();
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Texture2D background_stars;
         SpriteFont font;
         Player player;
         int windowHeight, windowWidth;
@@ -27,20 +26,6 @@ namespace Game1
         Weapon<Bullet> weapon;
 
         float deltaTime = 0.0f;
-
-        Instruction astroidRain =
-            new While(
-                new Semicolon(new Wait(1000),
-                    new Semicolon(
-                        new For(0, 10,
-                            new Semicolon(
-                                new CreateAstroid(),
-                                new Wait(500)
-                            )
-                        ), new Wait(500)
-                    )
-                )
-           );
 
         //Lists
         List<Astroid> astroids  = new List<Astroid>();
@@ -53,15 +38,12 @@ namespace Game1
         private ScrollingBackground background = new ScrollingBackground();
         private Vector2 screenpos;
 
-        // Virtual pc
-        int vpcstate = 0;
-        int line1AmountOfAstroids, iLine1;
-        float astroidWaitLine2, astroidWaitLine3;
-
         //settings
         const int minShotDelay = 5; // frames
         int shotDelay = 0;
         //float scrollspeed;
+
+        Instruction astroidRain;
 
         public Game1()
         {
@@ -81,38 +63,51 @@ namespace Game1
             player.health.position = new Vector2((windowWidth * 80 /100), (windowHeight * 95 / 100));
             player.position = new Vector2((float)windowWidth / 2, (float)(windowHeight * 0.80));
             player.controller = new CombineController(new MouseController(), new KeyboardController());
-            Content.Load<SoundEffect>("player_shoot");
-            Content.Load<Texture2D>("player_bullet_left");
             weapon = new SingleBlaster(Content, player.position);
+
+            astroidRain =
+                new While(
+                    new Semicolon(new Wait(100),
+                        new Semicolon(
+                            new For(0, (random.Next(50, 300)),
+                                new Semicolon(
+                                    new CreateAstroid(),
+                                    new Wait(100)
+                                )
+                            ), new Wait(5000)
+                        )
+                    )
+               );
         }
 
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            background_stars = Content.Load<Texture2D>("background_stars.png");
-            background.Load(GraphicsDevice, background_stars);
+            background.Load(GraphicsDevice, Content.Load<Texture2D>("background_stars.png"));
             font = Content.Load<SpriteFont>("GameFont");
             Content.Load<Texture2D>("asteroid.png");
+            Content.Load<SoundEffect>("player_shoot");
+            Content.Load<Texture2D>("player_bullet_left");
             // TODO: use this.Content to load your game content here
-        }
-
-        public void Update_Background(float deltaY)
-        {
-            screenpos.Y += deltaY;
         }
 
         protected override void Update(GameTime gameTime)
         {
             deltaTime = ((float)gameTime.ElapsedGameTime.TotalMilliseconds - deltaTime);
+            
+            /* Controller logic */
             if (shotDelay > 0)
                 shotDelay--;
-            if (player.health.amount < 1)
-                    Exit();
-            if (player.controller.exit())
-                Exit();
             if (player.controller.shooting())
                 weapon.PullTrigger();
+            if (player.controller.exit())
+                Exit();
+
+            /* Player logic */
+            if (player.health.amount < 1)
+                Exit();
+
 
             switch (astroidRain.Execute(deltaTime))
             {
@@ -128,22 +123,21 @@ namespace Game1
                     break;
             }
 
-            List<Astroid> rain = GenerateRain();
-
-            // COMMIT CHANGES
- 
+            List<Astroid> currentAstroidStream = GenerateRain();
             List<Powerup> poweruprain = UpdatePowerup();
 
-            astroids = rain;
+            // COMMIT CHANGES
 
+            astroids = currentAstroidStream;
             powerups = poweruprain;
-   
-            background.Update(deltaTime / 5);
 
+            bullets.AddRange(weapon.newBullets);
             bullets = UpdateBullets(bullets);
 
+            background.Update(deltaTime / 3);
+            
             player.controller.update(deltaTime, player);
-            bullets.AddRange(weapon.newBullets);
+            
             weapon.Update(deltaTime, player.position);
             base.Update(gameTime);
         }
