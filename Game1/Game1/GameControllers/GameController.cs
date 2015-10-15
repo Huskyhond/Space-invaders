@@ -6,10 +6,13 @@ using Microsoft.Xna.Framework;
 
 namespace Game1.GameControllers
 {
-    public interface GameController
+    public abstract class GameController
     {
-        void update(float DeltaTime, Player player);
-        bool shooting();
-        bool exit();
+        public static GameController operator +(GameController c1, GameController c2) {
+            return new CombineController(c1, c2);
+        }
+        public abstract void update(float DeltaTime, Player player);
+        public abstract bool shooting();
+        public abstract bool exit();
     }
 }

@@ -15,18 +15,18 @@ namespace Game1.GameControllers
             controller2 = ctrl2;
         }
 
-        public bool shooting()
+        public override bool shooting()
         {
             return controller1.shooting() || controller2.shooting();
         }
 
-        public void update(float DeltaTime, Player player)
+        public override void update(float DeltaTime, Player player)
         {
             controller1.update(DeltaTime, player);
             controller2.update(DeltaTime, player);
         }
 
-        public bool exit()
+        public override bool exit()
         {
             return controller1.exit() || controller2.exit();
         }

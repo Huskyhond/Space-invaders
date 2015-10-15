@@ -9,7 +9,7 @@ namespace Game1.GameControllers
 {
     class GamePadController : GameController
     {
-        public void update(float DeltaTime, Player player)
+        public override void update(float DeltaTime, Player player)
         {
             Vector2 state = GamePad.GetState(0).ThumbSticks.Left;
             
@@ -17,12 +17,12 @@ namespace Game1.GameControllers
 
         }
 
-        public bool shooting()
+        public override bool shooting()
         {
             return GamePad.GetState(0).IsButtonDown(Buttons.RightTrigger);
         }
 
-        public bool exit()
+        public override bool exit()
         {
             return GamePad.GetState(0).IsButtonDown(Buttons.Start);
         }

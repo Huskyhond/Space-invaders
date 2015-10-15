@@ -21,9 +21,12 @@ namespace Game1
         SpriteBatch spriteBatch;
         SpriteFont font;
         //Player player;
-        public int player_amount = 0;
+        public int amountOfPlayers = 0;
+        public List<ControllerOptions> PlayerControllerChoices;
         int windowHeight, windowWidth;
         int astroiddestroyed;
+
+        List<Player> DefaultPlayerSettings = new List<Player>();
 
         float deltaTime = 0.0f;
 
@@ -42,6 +45,21 @@ namespace Game1
 
         Instruction astroidRain;
 
+        public GameController getController(ControllerOptions controller)
+        {
+            switch (controller)
+            {
+                case ControllerOptions.Mouse:
+                    return new MouseController();
+                case ControllerOptions.Keyboard:
+                    return new KeyboardController();
+                case ControllerOptions.GamePad:
+                    return new GamePadController();
+                default:
+                    return new MouseController();
+            }
+        }
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -55,46 +73,34 @@ namespace Game1
             windowWidth = b.Width;
             windowHeight = b.Height;
 
-            for (int i = 0; i < player_amount; i++)
-            {
-                Player aPlayer = new Player(Content.Load<Texture2D>("Fighter_small.png"), new Health(Content.Load<Texture2D>("healthBar.png")));
-                aPlayer.position = new Vector2((float)windowWidth / 2, (float)(windowHeight * 0.80));
-                aPlayer.weapon = new SingleBlaster(Content, aPlayer);
-                Players.Add(aPlayer);
-            }
+            // Preset players:
+            Player p1 = new Player(Content.Load<Texture2D>("Fighter_small.png"), new Health(Content.Load<Texture2D>("healthBar.png")));
+            p1.health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 95 / 100));
+            p1.position = new Vector2((windowWidth/2)-80, windowHeight/2);
 
-            switch (Players.Count)
+            Player p2 = new Player(Content.Load<Texture2D>("Fighter_small.png"), new Health(Content.Load<Texture2D>("healthBar.png")));
+            p2.health.position = new Vector2(10.0f, (windowHeight * 95 / 100));
+            p2.position = new Vector2((windowWidth / 2) - 50, windowHeight / 2);
+            Player p3 = new Player(Content.Load<Texture2D>("Fighter_small.png"), new Health(Content.Load<Texture2D>("healthBar.png")));
+            p3.health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 5 / 100));
+            p3.position = new Vector2((windowWidth / 2) - 20, windowHeight / 2);
+
+            Player p4 = new Player(Content.Load<Texture2D>("Fighter_small.png"), new Health(Content.Load<Texture2D>("healthBar.png")));
+            p4.health.position = new Vector2(10.0f, (windowHeight * 5 / 100));
+            p4.position = new Vector2((windowWidth / 2) + 10, windowHeight / 2);
+
+            DefaultPlayerSettings.Add(p1);
+            DefaultPlayerSettings.Add(p2);
+            DefaultPlayerSettings.Add(p3);
+            DefaultPlayerSettings.Add(p4);
+
+            for (int i = 0; i < amountOfPlayers; i++)
             {
-                case 1:
-                    Players[0].controller = new MouseController();
-                    Players[0].health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 95 / 100));
-                    break;
-                case 2:
-                    Players[0].controller = new MouseController();
-                    Players[0].health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 95 / 100));
-                    Players[1].controller = new KeyboardController();
-                    Players[1].health.position = new Vector2(10.0f, (windowHeight * 95 / 100));
-                    break;
-                case 3:
-                    Players[0].controller = new MouseController();
-                    Players[0].health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 95 / 100));
-                    Players[1].controller = new KeyboardController();
-                    Players[1].health.position = new Vector2(10.0f, (windowHeight * 95 / 100));
-                    Players[2].controller = new GamePadController();
-                    Players[2].health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 5 / 100));
-                    break;
-                case 4:
-                    Players[0].controller = new MouseController();
-                    Players[0].health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 95 / 100));
-                    Players[1].controller = new KeyboardController();
-                    Players[1].health.position = new Vector2(10.0f, (windowHeight * 95 / 100));
-                    Players[2].controller = new GamePadController();
-                    Players[2].health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 5 / 100));
-                    Players[3].controller = new GamePadController();
-                    Players[3].health.position = new Vector2(10.0f, (windowHeight * 5 / 100));
-                    break;
-                default:
-                    break;
+                Player ptoAdd = DefaultPlayerSettings[i];
+                ptoAdd.controller = getController(PlayerControllerChoices[i]);
+                ptoAdd.weapon = new SingleBlaster(Content, ptoAdd);
+                Players.Add(ptoAdd);
+
             }
 
             astroidRain =

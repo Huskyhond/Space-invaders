@@ -20,7 +20,8 @@ namespace Game1
             {
                 using (var game = new Game1())
                 {
-                    game.player_amount = form.i;
+                    game.amountOfPlayers = form.amountOfPlayers;
+                    game.PlayerControllerChoices = form.PlayerControllerChoices;
                     game.Run();
                 }
             }

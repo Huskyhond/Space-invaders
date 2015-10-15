@@ -9,12 +9,12 @@ namespace Game1.GameControllers
 {
     class KeyboardController : GameController
     {
-        public bool shooting()
+        public override bool shooting()
         {
             return Keyboard.GetState().IsKeyDown(Keys.LeftControl);
         }
 
-        public void update(float DeltaTime, Player player)
+        public override void update(float DeltaTime, Player player)
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Left))
                 player.position = new Vector2(player.position.X - player.velocity.X, player.position.Y);
@@ -26,7 +26,7 @@ namespace Game1.GameControllers
                 player.position = new Vector2(player.position.X, player.position.Y + player.velocity.Y);
         }
 
-        public bool exit()
+        public override bool exit()
         {
             return Keyboard.GetState().IsKeyDown(Keys.Escape);
         }
