@@ -23,7 +23,6 @@ namespace Game1
         //Player player;
         int windowHeight, windowWidth;
         int astroiddestroyed;
-        Weapon<Bullet> weapon;
 
         float deltaTime = 0.0f;
 
@@ -37,11 +36,7 @@ namespace Game1
 
         //Background_properties
         private ScrollingBackground background = new ScrollingBackground();
-        private Vector2 screenpos;
 
-        //settings
-        const int minShotDelay = 5; // frames
-        int shotDelay = 0;
         //float scrollspeed;
 
         Instruction astroidRain;
@@ -127,10 +122,6 @@ namespace Game1
 
             switch (astroidRain.Execute(deltaTime))
             {
-                case InstructionResult.Running:
-                    break;
-                case InstructionResult.Done:
-                    break;
                 case InstructionResult.RunningAndCreateAstroid:
                 case InstructionResult.DoneAndCreateAstroid:
                     astroids.Add(new Astroid(Content.Load<Texture2D>("asteroid.png"), new Vector2((float)random.Next(windowWidth), 0.0f), new Vector2((float)random.NextDouble() * 2 - 1, (float)random.NextDouble() * 2 + 2), 5));
@@ -146,13 +137,10 @@ namespace Game1
 
             astroids = currentAstroidStream;
             powerups = poweruprain;
+            Players = survivingPlayers;
 
             if (survivingPlayers.Count < 1)
-            {
                 Exit();
-            }
-
-            Players = survivingPlayers;
 
             foreach (Player player in Players)
             {
@@ -160,17 +148,13 @@ namespace Game1
                 player.controller.update(deltaTime, player);
                 player.weapon.Update(deltaTime, player);
             }
-
             bullets = UpdateBullets(bullets);
-
-            background.Update(deltaTime / 3);
-            
+            background.Update(deltaTime / 5);         
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
             background.Draw(spriteBatch);
             foreach (Player player in Players)
@@ -198,7 +182,6 @@ namespace Game1
                     spriteBatch.DrawString(font, "Score: " + Players[0].score, new Vector2(Players[0].health.position.X, Players[0].health.position.Y - 20.0f), Color.White);
                     spriteBatch.DrawString(font, "Score: " + Players[1].score, new Vector2(Players[1].health.position.X, Players[1].health.position.Y - 20.0f), Color.White);
                     spriteBatch.DrawString(font, "Score: " + Players[2].score, new Vector2(Players[2].health.position.X, Players[2].health.position.Y + 20.0f), Color.White);
-                    
                     break;
                 default:
                     break;
@@ -310,7 +293,6 @@ namespace Game1
             return false;
         }
 
-        
         public List<Astroid> GenerateRain()
         {
             //AstroidStateChanger();

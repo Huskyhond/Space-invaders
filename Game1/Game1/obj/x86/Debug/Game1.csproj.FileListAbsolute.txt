@@ -113,15 +113,9 @@ C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1
 C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\obj\x86\Debug\Game1.pdb
 C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\asteroid.png
 C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\background_stars.png
-C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\Boris_Hoofd.jpg
-C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\Fighter.png
 C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\Fighter_small.png
-C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\healthplus.jpg
 C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\healthBar.png
-C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\Kappa.png
-C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\player_bullet.png
 C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\player_bullet_left.png
-C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\player_bullet_right.png
 C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\powerup1.png
 C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\GameFont.xnb
 C:\Users\Boris_000\Source\Repos\TIRPRO015A_0893282_0890813_0835560_0889076\Game1\Game1\bin\Windows\Debug\Content\player_shoot.xnb

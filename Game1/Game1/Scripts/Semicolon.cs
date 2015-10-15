@@ -38,7 +38,6 @@ namespace Game1.Scripts
                         return InstructionResult.RunningAndCreateAstroid;
                     default:
                         return aRes;
-                        break;
                 }
             }
             else

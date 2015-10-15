@@ -31,12 +31,8 @@ namespace Game1
         public void Draw(SpriteBatch batch)
         {
             if (screenpos.Y < screenheight)
-            {
-                batch.Draw(mytexture, screenpos, null,
-                     Color.White, 0, origin, 1, SpriteEffects.None, 0f);
-            }
-            batch.Draw(mytexture, screenpos - texturesize, null,
-                 Color.White, 0, origin, 1, SpriteEffects.None, 0f);
+                batch.Draw(mytexture, screenpos, null,Color.White, 0, origin, 1, SpriteEffects.None, 0f);
+            batch.Draw(mytexture, screenpos - texturesize, null, Color.White, 0, origin, 1, SpriteEffects.None, 0f);
         }
     }
 }

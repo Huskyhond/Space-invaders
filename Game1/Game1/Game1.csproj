@@ -45,8 +45,8 @@
     <Compile Include="Scripts\Semicolon.cs" />
     <Compile Include="Scripts\Wait.cs" />
     <Compile Include="Scripts\While.cs" />
-    <Compile Include="Weapons\TripleBlaster.cs" />
     <Compile Include="Weapons\DoubleBlaster.cs" />
+    <Compile Include="Weapons\TripleBlaster.cs" />
     <Compile Include="Weapons\SingleBlaster.cs" />
     <Compile Include="Weapons\GenericBlaster.cs" />
     <Compile Include="Bullet.cs" />
@@ -59,7 +59,7 @@
     <Compile Include="Game1.cs" />
     <Compile Include="GameControllers\KeyboardController.cs" />
     <Compile Include="Player.cs" />
-    <Compile Include="Powerup.cs" />
+    <Compile Include="Powerups\Powerup.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScrollingBackground.cs" />
