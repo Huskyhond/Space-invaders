@@ -75,18 +75,18 @@ namespace Game1
 
             // Preset players:
             Player p1 = new Player(Content.Load<Texture2D>("Fighter_small.png"), new Health(Content.Load<Texture2D>("healthBar.png")));
-            p1.health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 95 / 100));
+            p1.health.position = new Vector2(10.0f, (windowHeight * 95 / 100));
             p1.position = new Vector2((windowWidth/2)-80, windowHeight/2);
 
             Player p2 = new Player(Content.Load<Texture2D>("Fighter_small.png"), new Health(Content.Load<Texture2D>("healthBar.png")));
-            p2.health.position = new Vector2(10.0f, (windowHeight * 95 / 100));
+            p2.health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 95 / 100));
             p2.position = new Vector2((windowWidth / 2) - 50, windowHeight / 2);
             Player p3 = new Player(Content.Load<Texture2D>("Fighter_small.png"), new Health(Content.Load<Texture2D>("healthBar.png")));
-            p3.health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 5 / 100));
+            p3.health.position = new Vector2(10.0f, (windowHeight * 5 / 100));
             p3.position = new Vector2((windowWidth / 2) - 20, windowHeight / 2);
 
             Player p4 = new Player(Content.Load<Texture2D>("Fighter_small.png"), new Health(Content.Load<Texture2D>("healthBar.png")));
-            p4.health.position = new Vector2(10.0f, (windowHeight * 5 / 100));
+            p4.health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 5 / 100));
             p4.position = new Vector2((windowWidth / 2) + 10, windowHeight / 2);
 
             DefaultPlayerSettings.Add(p1);
