@@ -19,10 +19,11 @@ namespace Game1
         public int powerupcounter { get; set; }
         public Weapon<Bullet> weapon { get; set; }
         public GameController controller { get; set; }
+        public String player_name { get; set; }
 
         public int score { get; set; }
 
-        public Player(Texture2D texture, Health health)
+        public Player(Texture2D texture, Health health, String player_name)
         {
             ////this.score = 0;
             this.health = health;
@@ -30,6 +31,7 @@ namespace Game1
             this.powerupcounter = 0;
             this.lives = 3;
             this.velocity = new Vector2(6.0f, 6.0f);
+            this.player_name = player_name;
         }
 
         public void Draw(SpriteBatch spriteBatch)
