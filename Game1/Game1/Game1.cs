@@ -21,6 +21,7 @@ namespace Game1
         SpriteBatch spriteBatch;
         SpriteFont font;
         //Player player;
+        public int player_amount = 0;
         int windowHeight, windowWidth;
         int astroiddestroyed;
 
@@ -53,13 +54,8 @@ namespace Game1
             Rectangle b = GraphicsDevice.Viewport.Bounds;
             windowWidth = b.Width;
             windowHeight = b.Height;
-            //player = new Player(Content.Load<Texture2D>("Fighter_small.png"), health);
-            //player.health.position = new Vector2((windowWidth * 80 /100), (windowHeight * 95 / 100));
-            //player.position = new Vector2((float)windowWidth / 2, (float)(windowHeight * 0.80));
-            //player.controller = new CombineController(new MouseController(), new KeyboardController());
-            //player.weapon = new SingleBlaster(Content, player.position);
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < player_amount; i++)
             {
                 Player aPlayer = new Player(Content.Load<Texture2D>("Fighter_small.png"), new Health(Content.Load<Texture2D>("healthBar.png")));
                 aPlayer.position = new Vector2((float)windowWidth / 2, (float)(windowHeight * 0.80));
@@ -67,13 +63,40 @@ namespace Game1
                 Players.Add(aPlayer);
             }
 
-            Players[0].controller = new MouseController();
-            Players[0].health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 95 / 100));
-            Players[1].controller = new KeyboardController();
-            Players[1].health.position = new Vector2(10.0f, (windowHeight * 95 / 100));
-            Players[2].controller = new GamePadController();
-            Players[2].health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 5 / 100));
-                
+            switch (Players.Count)
+            {
+                case 1:
+                    Players[0].controller = new MouseController();
+                    Players[0].health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 95 / 100));
+                    break;
+                case 2:
+                    Players[0].controller = new MouseController();
+                    Players[0].health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 95 / 100));
+                    Players[1].controller = new KeyboardController();
+                    Players[1].health.position = new Vector2(10.0f, (windowHeight * 95 / 100));
+                    break;
+                case 3:
+                    Players[0].controller = new MouseController();
+                    Players[0].health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 95 / 100));
+                    Players[1].controller = new KeyboardController();
+                    Players[1].health.position = new Vector2(10.0f, (windowHeight * 95 / 100));
+                    Players[2].controller = new GamePadController();
+                    Players[2].health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 5 / 100));
+                    break;
+                case 4:
+                    Players[0].controller = new MouseController();
+                    Players[0].health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 95 / 100));
+                    Players[1].controller = new KeyboardController();
+                    Players[1].health.position = new Vector2(10.0f, (windowHeight * 95 / 100));
+                    Players[2].controller = new GamePadController();
+                    Players[2].health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 5 / 100));
+                    Players[3].controller = new GamePadController();
+                    Players[3].health.position = new Vector2(10.0f, (windowHeight * 5 / 100));
+                    break;
+                default:
+                    break;
+            }
+
             astroidRain =
                 new While(
                     new Semicolon(new Wait(100),
@@ -112,7 +135,7 @@ namespace Game1
                 /* Controller logic */
                 if (player.controller.shooting())
                     player.weapon.PullTrigger();
-                if (player.controller.exit())
+                if (player.controller.exit() || Keyboard.GetState().IsKeyDown(Keys.Escape))
                     Exit();
 
                 /* Player logic */
@@ -182,6 +205,12 @@ namespace Game1
                     spriteBatch.DrawString(font, "Score: " + Players[0].score, new Vector2(Players[0].health.position.X, Players[0].health.position.Y - 20.0f), Color.White);
                     spriteBatch.DrawString(font, "Score: " + Players[1].score, new Vector2(Players[1].health.position.X, Players[1].health.position.Y - 20.0f), Color.White);
                     spriteBatch.DrawString(font, "Score: " + Players[2].score, new Vector2(Players[2].health.position.X, Players[2].health.position.Y + 20.0f), Color.White);
+                    break;
+                case 4:
+                    spriteBatch.DrawString(font, "Score: " + Players[0].score, new Vector2(Players[0].health.position.X, Players[0].health.position.Y - 20.0f), Color.White);
+                    spriteBatch.DrawString(font, "Score: " + Players[1].score, new Vector2(Players[1].health.position.X, Players[1].health.position.Y - 20.0f), Color.White);
+                    spriteBatch.DrawString(font, "Score: " + Players[2].score, new Vector2(Players[2].health.position.X, Players[2].health.position.Y + 20.0f), Color.White);
+                    spriteBatch.DrawString(font, "Score: " + Players[3].score, new Vector2(Players[3].health.position.X, Players[3].health.position.Y + 20.0f), Color.White);
                     break;
                 default:
                     break;

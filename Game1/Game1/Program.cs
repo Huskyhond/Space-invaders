@@ -14,8 +14,16 @@ namespace Game1
         [STAThread]
         static void Main()
         {
-            using (var game = new Game1())
-                game.Run();
+            var form = new Form1();
+
+            if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                using (var game = new Game1())
+                {
+                    game.player_amount = form.i;
+                    game.Run();
+                }
+            }
         }
     }
 #endif
