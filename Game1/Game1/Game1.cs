@@ -20,7 +20,7 @@ namespace Game1
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteFont font;
-        Player player;
+        //Player player;
         int windowHeight, windowWidth;
         int astroiddestroyed;
         Weapon<Bullet> weapon;
@@ -28,6 +28,7 @@ namespace Game1
         float deltaTime = 0.0f;
 
         //Lists
+        List<Player> Players = new List<Player>();
         List<Astroid> astroids  = new List<Astroid>();
         List<Bullet> bullets = new List<Bullet>();
         List<Powerup> powerups = new List<Powerup>();
@@ -50,7 +51,6 @@ namespace Game1
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
-
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
@@ -58,13 +58,27 @@ namespace Game1
             Rectangle b = GraphicsDevice.Viewport.Bounds;
             windowWidth = b.Width;
             windowHeight = b.Height;
-            Health health = new Health(Content.Load<Texture2D>("healthBar.png"));
-            player = new Player(Content.Load<Texture2D>("Fighter_small.png"), health);
-            player.health.position = new Vector2((windowWidth * 80 /100), (windowHeight * 95 / 100));
-            player.position = new Vector2((float)windowWidth / 2, (float)(windowHeight * 0.80));
-            player.controller = new CombineController(new MouseController(), new KeyboardController());
-            weapon = new SingleBlaster(Content, player.position);
+            //player = new Player(Content.Load<Texture2D>("Fighter_small.png"), health);
+            //player.health.position = new Vector2((windowWidth * 80 /100), (windowHeight * 95 / 100));
+            //player.position = new Vector2((float)windowWidth / 2, (float)(windowHeight * 0.80));
+            //player.controller = new CombineController(new MouseController(), new KeyboardController());
+            //player.weapon = new SingleBlaster(Content, player.position);
 
+            for (int i = 0; i < 3; i++)
+            {
+                Player aPlayer = new Player(Content.Load<Texture2D>("Fighter_small.png"), new Health(Content.Load<Texture2D>("healthBar.png")));
+                aPlayer.position = new Vector2((float)windowWidth / 2, (float)(windowHeight * 0.80));
+                aPlayer.weapon = new SingleBlaster(Content, aPlayer);
+                Players.Add(aPlayer);
+            }
+
+            Players[0].controller = new MouseController();
+            Players[0].health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 95 / 100));
+            Players[1].controller = new KeyboardController();
+            Players[1].health.position = new Vector2(10.0f, (windowHeight * 95 / 100));
+            Players[2].controller = new GamePadController();
+            Players[2].health.position = new Vector2((windowWidth * 80 / 100), (windowHeight * 5 / 100));
+                
             astroidRain =
                 new While(
                     new Semicolon(new Wait(100),
@@ -89,25 +103,27 @@ namespace Game1
             Content.Load<Texture2D>("asteroid.png");
             Content.Load<SoundEffect>("player_shoot");
             Content.Load<Texture2D>("player_bullet_left");
+            Content.Load<Texture2D>("Fighter_small.png");
+            Content.Load<Texture2D>("healthBar.png");
             // TODO: use this.Content to load your game content here
         }
 
         protected override void Update(GameTime gameTime)
         {
             deltaTime = ((float)gameTime.ElapsedGameTime.TotalMilliseconds - deltaTime);
-            
-            /* Controller logic */
-            if (shotDelay > 0)
-                shotDelay--;
-            if (player.controller.shooting())
-                weapon.PullTrigger();
-            if (player.controller.exit())
-                Exit();
+            List<Player> survivingPlayers = new List<Player>();
+            foreach (Player player in Players)
+            {
+                /* Controller logic */
+                if (player.controller.shooting())
+                    player.weapon.PullTrigger();
+                if (player.controller.exit())
+                    Exit();
 
-            /* Player logic */
-            if (player.health.amount < 1)
-                Exit();
-
+                /* Player logic */
+                if (player.health.amount > 0)
+                    survivingPlayers.Add(player);
+            }
 
             switch (astroidRain.Execute(deltaTime))
             {
@@ -131,14 +147,24 @@ namespace Game1
             astroids = currentAstroidStream;
             powerups = poweruprain;
 
-            bullets.AddRange(weapon.newBullets);
+            if (survivingPlayers.Count < 1)
+            {
+                Exit();
+            }
+
+            Players = survivingPlayers;
+
+            foreach (Player player in Players)
+            {
+                bullets.AddRange(player.weapon.newBullets);
+                player.controller.update(deltaTime, player);
+                player.weapon.Update(deltaTime, player);
+            }
+
             bullets = UpdateBullets(bullets);
 
             background.Update(deltaTime / 3);
             
-            player.controller.update(deltaTime, player);
-            
-            weapon.Update(deltaTime, player.position);
             base.Update(gameTime);
         }
 
@@ -147,15 +173,37 @@ namespace Game1
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
             background.Draw(spriteBatch);
-            spriteBatch.Draw(player.texture, player.position, Color.White);
+            foreach (Player player in Players)
+            {
+                spriteBatch.Draw(player.texture, player.position, Color.White);
+                player.health.Draw(spriteBatch);
+            }
             foreach (Bullet bullet in bullets)
                 bullet.Draw(spriteBatch);
             foreach (Astroid astroid in astroids)
                 astroid.Draw(spriteBatch);
             foreach (Powerup powerup in powerups)
                 powerup.Draw(spriteBatch);
-            spriteBatch.DrawString(font, "Score: " + player.score, new Vector2(player.health.position.X, player.health.position.Y-20.0f), Color.White);
-            player.health.Draw(spriteBatch);
+                
+            switch (Players.Count())
+            {
+                case 1:
+                    spriteBatch.DrawString(font, "Score: " + Players[0].score, new Vector2(Players[0].health.position.X, Players[0].health.position.Y - 20.0f), Color.White);
+                    break;
+                case 2:
+                    spriteBatch.DrawString(font, "Score: " + Players[0].score, new Vector2(Players[0].health.position.X, Players[0].health.position.Y - 20.0f), Color.White);
+                    spriteBatch.DrawString(font, "Score: " + Players[1].score, new Vector2(Players[1].health.position.X, Players[1].health.position.Y - 20.0f), Color.White);
+                    break;
+                case 3:
+                    spriteBatch.DrawString(font, "Score: " + Players[0].score, new Vector2(Players[0].health.position.X, Players[0].health.position.Y - 20.0f), Color.White);
+                    spriteBatch.DrawString(font, "Score: " + Players[1].score, new Vector2(Players[1].health.position.X, Players[1].health.position.Y - 20.0f), Color.White);
+                    spriteBatch.DrawString(font, "Score: " + Players[2].score, new Vector2(Players[2].health.position.X, Players[2].health.position.Y + 20.0f), Color.White);
+                    
+                    break;
+                default:
+                    break;
+            }
+            
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -180,7 +228,7 @@ namespace Game1
                 {
                     astroid.health--;
                     if (astroid.health < 1)  
-                        player.score += 500;
+                        bullet.shotBy.score += 500;
                         
                     return true;
                 }
@@ -190,28 +238,32 @@ namespace Game1
 
         public bool AstroidPlayerCollisionDetection(Astroid astroid)
         {
-            float playerMinX = player.position.X;
-            float playerMaxX = (player.position.X + player.texture.Bounds.Width);
-
-            float playerMinY = player.position.Y;
-            float playerMaxY = (player.position.Y + player.texture.Bounds.Height);
-
-            float astroidMinX = astroid.position.X;
-            float astroidMaxX = (astroid.position.X + astroid.texture.Bounds.Width);
-
-            float astroidMinY = astroid.position.Y;
-            float astroidMaxY = (astroid.position.Y + astroid.texture.Bounds.Height);
-
-            float middroidX = (astroidMinX + ((astroidMaxX - astroidMinX) / 2));
-            float middroidY = (astroidMinY + ((astroidMaxY - astroidMinY) / 2));
-
-            if (middroidX > playerMinX && middroidX < playerMaxX)
+            foreach (Player player in Players)
             {
-                if (middroidY > playerMinY && middroidY < playerMaxY)
+                float playerMinX = player.position.X;
+                float playerMaxX = (player.position.X + player.texture.Bounds.Width);
+
+                float playerMinY = player.position.Y;
+                float playerMaxY = (player.position.Y + player.texture.Bounds.Height);
+
+
+                float astroidMinX = astroid.position.X;
+                float astroidMaxX = (astroid.position.X + astroid.texture.Bounds.Width);
+
+                float astroidMinY = astroid.position.Y;
+                float astroidMaxY = (astroid.position.Y + astroid.texture.Bounds.Height);
+
+                float middroidX = (astroidMinX + ((astroidMaxX - astroidMinX) / 2));
+                float middroidY = (astroidMinY + ((astroidMaxY - astroidMinY) / 2));
+
+                if (middroidX > playerMinX && middroidX < playerMaxX)
                 {
-                    player.health.amount--;
-                    astroid.health = 0;
-                    return true;
+                    if (middroidY > playerMinY && middroidY < playerMaxY)
+                    {
+                        player.health.amount--;
+                        astroid.health = 0;
+                        return true;
+                    }
                 }
             }
             return false;
@@ -219,37 +271,40 @@ namespace Game1
 
         public bool PowerupPlayerCollisionDetection(Powerup powerup)
         {
-            float playerMinX = player.position.X;
-            float playerMaxX = (player.position.X + player.texture.Bounds.Width);
-
-            float playerMinY = player.position.Y;
-            float playerMaxY = (player.position.Y + player.texture.Bounds.Height);
-
-            float powerupMinY = powerup.position.Y;
-            float powerupMaxY = (powerup.position.Y + powerup.texture.Bounds.Height);
-
-            float powerupMinX = powerup.position.X;
-            float powerupMaxX = (powerup.position.X + powerup.texture.Bounds.Width);
-
-            float midpowerX = (powerupMinX + ((powerupMaxX - powerupMinX) / 2));
-            float midpowerY = (powerupMinY + ((powerupMaxY - powerupMinY) / 2));
-
-            if (midpowerX > playerMinX && midpowerX < playerMaxX)
+            foreach (Player player in Players)
             {
-                if (midpowerY > playerMinY && midpowerY < playerMaxY)
+                float playerMinX = player.position.X;
+                float playerMaxX = (player.position.X + player.texture.Bounds.Width);
+
+                float playerMinY = player.position.Y;
+                float playerMaxY = (player.position.Y + player.texture.Bounds.Height);
+
+                float powerupMinY = powerup.position.Y;
+                float powerupMaxY = (powerup.position.Y + powerup.texture.Bounds.Height);
+
+                float powerupMinX = powerup.position.X;
+                float powerupMaxX = (powerup.position.X + powerup.texture.Bounds.Width);
+
+                float midpowerX = (powerupMinX + ((powerupMaxX - powerupMinX) / 2));
+                float midpowerY = (powerupMinY + ((powerupMaxY - powerupMinY) / 2));
+
+                if (midpowerX > playerMinX && midpowerX < playerMaxX)
                 {
-                    if (player.powerupcounter == 0)
-                        player.powerupcounter++;
-                    else if (player.powerupcounter == 1)
-                        player.powerupcounter++;
-                    else if (player.powerupcounter == 2)
-                        player.powerupcounter++;
-                    else if (player.powerupcounter == 3)
-                        player.powerupcounter++;
-                    else if (player.powerupcounter == 4)
-                        player.powerupcounter++;
-                    PowerupChecker();
-                    return true;
+                    if (midpowerY > playerMinY && midpowerY < playerMaxY)
+                    {
+                        if (player.powerupcounter == 0)
+                            player.powerupcounter++;
+                        else if (player.powerupcounter == 1)
+                            player.powerupcounter++;
+                        else if (player.powerupcounter == 2)
+                            player.powerupcounter++;
+                        else if (player.powerupcounter == 3)
+                            player.powerupcounter++;
+                        else if (player.powerupcounter == 4)
+                            player.powerupcounter++;
+                        PowerupChecker();
+                        return true;
+                    }
                 }
             }
             return false;
@@ -325,15 +380,19 @@ namespace Game1
 
         public void PowerupChecker()
         {
-            if (player.powerupcounter <= 2)
+            foreach (Player player in Players)
             {
-                switch(player.powerupcounter) {
-                    case 1:
-                        weapon = new DoubleBlaster(Content, player.position);
-                    break;
-                    case 2:
-                        weapon = new TripleBlaster(Content, player.position);
-                    break;
+                if (player.powerupcounter <= 2)
+                {
+                    switch (player.powerupcounter)
+                    {
+                        case 1:
+                            player.weapon = new DoubleBlaster(Content, player);
+                            break;
+                        case 2:
+                            player.weapon = new TripleBlaster(Content, player);
+                            break;
+                    }
                 }
             }
         }

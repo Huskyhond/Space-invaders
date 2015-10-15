@@ -10,11 +10,11 @@ namespace Game1
 {
     class SingleBlaster : GenericBlaster
     {
-        public SingleBlaster(ContentManager content, Vector2 shipPos) : base(content, shipPos) { }
+        public SingleBlaster(ContentManager content, Player player) : base(content, player) { }
 
         protected override void Addshots()
         {
-            currentBullets.Add(new Bullet(Content.Load<Texture2D>("player_bullet_left"), shipPosition));
+            currentBullets.Add(new Bullet(Content.Load<Texture2D>("player_bullet_left"), player.position, player));
         }
     }
 }

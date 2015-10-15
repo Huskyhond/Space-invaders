@@ -17,6 +17,7 @@ namespace Game1
         public Health health { get; set; }
         public Texture2D texture { get; set; }
         public int powerupcounter { get; set; }
+        public Weapon<Bullet> weapon { get; set; }
         public GameController controller { get; set; }
 
         public int score { get; set; }

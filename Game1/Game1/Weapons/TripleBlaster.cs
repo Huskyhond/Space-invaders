@@ -10,13 +10,13 @@ namespace Game1
 {
     class TripleBlaster : GenericBlaster
     {
-        public TripleBlaster(ContentManager content, Vector2 shipPos) : base(content, shipPos) { }
+        public TripleBlaster(ContentManager content, Player player) : base(content, player) { }
 
         protected override void Addshots()
         {
-            currentBullets.Add(new Bullet(Content.Load<Texture2D>("player_bullet_left"), shipPosition));
-            currentBullets.Add(new Bullet(Content.Load<Texture2D>("player_bullet_left"), shipPosition + new Vector2(25.0f, 0.0f)));
-            currentBullets.Add(new Bullet(Content.Load<Texture2D>("player_bullet_left"), shipPosition + new Vector2(12.5f, 0.0f)));
+            currentBullets.Add(new Bullet(Content.Load<Texture2D>("player_bullet_left"), player.position, player));
+            currentBullets.Add(new Bullet(Content.Load<Texture2D>("player_bullet_left"), player.position + new Vector2(25.0f, 0.0f), player));
+            currentBullets.Add(new Bullet(Content.Load<Texture2D>("player_bullet_left"), player.position + new Vector2(12.5f, 0.0f), player));
         }
     }
 }

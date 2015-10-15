@@ -15,13 +15,15 @@ namespace Game1
         protected ContentManager Content;
         protected SoundEffect bulletshot;
         protected Vector2 shipPosition;
+        protected Player player;
         const int minShotDelay = 5;
         int shotDelay = 0;
 
-        public GenericBlaster(ContentManager content, Vector2 shipPos)
+        public GenericBlaster(ContentManager content, Player player)
         {
             this.Content = content;
-            this.shipPosition = shipPos;
+            this.shipPosition = player.position;
+            this.player = player;
         }
 
         public List<Bullet> newBullets
@@ -45,11 +47,11 @@ namespace Game1
             }
         }
 
-        public void Update(float dt, Vector2 shipPos)
+        public void Update(float dt, Player player)
         {
             if (shotDelay > 0)
                 shotDelay--;
-            this.shipPosition = shipPos;
+            this.shipPosition = player.position;
             currentBullets = new List<Bullet>();
         }
     }
