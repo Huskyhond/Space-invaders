@@ -7,10 +7,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Game1
 {
-    interface Entity
+    public abstract class Entity
     {
-        Vector2 position { get; }
-        Vector2 velocity { get; }
-        Texture2D texture { get; }
+        public abstract Vector2 position { get; }
+        public abstract Vector2 velocity { get; }
+        public abstract Texture2D texture { get; }
     }
 }

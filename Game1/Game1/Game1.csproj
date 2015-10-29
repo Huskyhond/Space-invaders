@@ -114,6 +114,7 @@
     </MonoGameContentReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Content\GameFont.spritefont" />
     <None Include="Content\GameFont.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
