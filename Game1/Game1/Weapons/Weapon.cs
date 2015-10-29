@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-public abstract class Weapon<Ammunition>
+public interface Weapon<Ammunition>
 {
-    public abstract void PullTrigger();
-    public abstract List<Ammunition> newBullets { get; }
-    public abstract void Update(float dt, Player player);
+    void PullTrigger();
+    List<Ammunition> newBullets { get; }
+    void Update(float dt, Player player);
 }
